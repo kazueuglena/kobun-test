@@ -1,0 +1,1698 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>古文テスト — 単語・助動詞・敬語・識別</title>
+<meta name="description" content="共通テスト古文のための自習アプリ。古文単語301語・助動詞31・敬語45・文法識別46問をAnki風の間隔反復で覚える。">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="古文テスト">
+<meta name="theme-color" content="#f6f5f3">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="icon" href="./icon-192.png">
+<style>
+:root{
+  --bg:#f6f5f3; --card:#ffffff; --ink:#1e1b20; --sub:#61596b; --line:#e6e2e6;
+  --bb:#6a4fa3; --bb-dark:#57408a; --bb-soft:#f0ecf9;
+  --ok:#2b7150; --ok-soft:#e7f2ec; --ng:#a53f52; --ng-soft:#fbecef; --warn:#a05c17;
+  --purple:#6a4fa3; --purple-soft:#f0ecf9;
+  --d-word:#6a4fa3; --d-aux:#2f5d9e; --d-kei:#2b7150; --d-ident:#a53f52;
+  --mincho:'Hiragino Mincho ProN','Yu Mincho','YuMincho','Noto Serif JP','Times New Roman',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;
+  font-size:15px;line-height:1.65;padding-bottom:env(safe-area-inset-bottom);min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:16px 14px calc(60px + env(safe-area-inset-bottom))}
+
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+header h1{font-size:19px;font-weight:700}
+header h1 span{color:var(--bb)}
+.streak{font-size:12.5px;color:var(--sub);font-weight:600}
+.streak.hot{color:var(--warn)}
+
+nav{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+nav button{background:var(--card);color:var(--sub);border:1px solid var(--line);
+  padding:9px 15px;border-radius:999px;cursor:pointer;font-size:13.5px;font-family:inherit;
+  font-weight:500;touch-action:manipulation}
+nav button.active{background:var(--bb);color:#fff;border-color:var(--bb)}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px}
+.card h2{font-size:15.5px;margin-bottom:12px}
+.card h3{font-size:13px;margin:14px 0 6px;color:var(--sub);font-weight:600}
+.muted{color:var(--sub);font-size:12.5px}
+.tiny{font-size:11.5px;color:var(--sub)}
+
+.btn{display:inline-block;border:0;border-radius:999px;padding:11px 22px;font-size:15px;font-weight:600;
+  cursor:pointer;font-family:inherit;background:var(--bb);color:#fff;touch-action:manipulation}
+.btn:hover{background:var(--bb-dark)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.ghost{background:var(--card);color:var(--bb);border:1.5px solid var(--bb)}
+.btn.ghost:hover{background:var(--bb-soft)}
+.btn.gray{background:#edeaee;color:var(--ink)}
+.btn.gray:hover{background:#e2dee4}
+.btn.danger{background:var(--ng)}
+.btn.sm{padding:7px 16px;font-size:13px;font-weight:500}
+.btn.block{display:block;width:100%;text-align:center}
+.btn.big{padding:15px 22px;font-size:16.5px}
+
+.chiprow{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;
+  font-size:13px;cursor:pointer;user-select:none;font-family:inherit;color:var(--ink);touch-action:manipulation}
+.chip.on{background:var(--bb);border-color:var(--bb);color:#fff}
+.chip.grp{background:none;border:0;color:var(--sub);font-size:12px;cursor:default;padding:6px 2px 6px 0;
+  min-width:76px}
+.chip .ct{opacity:.65;font-size:11px;margin-left:4px}
+
+/* デッキ選択 */
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:6px}
+.deck{background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:13px 12px;
+  cursor:pointer;text-align:left;touch-action:manipulation;position:relative;overflow:hidden}
+.deck .dn{font-weight:700;font-size:14.5px}
+.deck .dd{font-size:11px;color:var(--sub);margin-top:3px;line-height:1.5}
+.deck .dt{font-size:11px;font-weight:600;margin-top:6px}
+.deck .dbar{height:4px;background:var(--line);border-radius:999px;margin-top:7px;overflow:hidden}
+.deck .dbar i{display:block;height:100%;border-radius:999px}
+.deck.on{border-width:1.5px}
+.deck.word.on{border-color:var(--d-word);background:#f4f1fb}
+.deck.aux.on{border-color:var(--d-aux);background:#eef3fa}
+.deck.kei.on{border-color:var(--d-kei);background:#eaf4ee}
+.deck.ident.on{border-color:var(--d-ident);background:#fbeef1}
+.deck.word .dt,.deck.word .dbar i{color:var(--d-word);background-color:var(--d-word)}
+.deck.aux  .dt,.deck.aux  .dbar i{color:var(--d-aux);background-color:var(--d-aux)}
+.deck.kei  .dt,.deck.kei  .dbar i{color:var(--d-kei);background-color:var(--d-kei)}
+.deck.ident .dt,.deck.ident .dbar i{color:var(--d-ident);background-color:var(--d-ident)}
+.deck .dt{background:none !important}
+
+/* プランカード */
+.plangrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:6px}
+.plan{background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:13px 12px;
+  cursor:pointer;text-align:left;touch-action:manipulation}
+.plan.on{border-color:var(--bb);background:var(--bb-soft)}
+.plan .pn{font-weight:700;font-size:14px}
+.plan .pd{font-size:11px;color:var(--sub);margin-top:3px;line-height:1.5}
+.plan .pt{font-size:11px;color:var(--bb);font-weight:600;margin-top:5px}
+.plan.done{opacity:.55}
+.plan.done .pt{color:var(--ok)}
+
+select{width:100%;background:#fff;border:1px solid var(--line);color:var(--ink);
+  padding:10px 12px;border-radius:8px;font-size:16px;font-family:inherit}
+input[type=text],input[type=number],textarea{width:100%;background:#fff;border:1px solid var(--line);
+  color:var(--ink);padding:10px 12px;border-radius:8px;font-size:16px;font-family:inherit}
+textarea{resize:vertical;min-height:70px;font-size:13px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>*{flex:1;min-width:130px}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.kpi b{font-size:23px;display:block;line-height:1.25}
+.kpi div{font-size:11.5px;color:var(--sub)}
+.kpi.ok b{color:var(--ok)} .kpi.warn b{color:var(--warn)} .kpi.bb b{color:var(--bb)}
+.kpi.ng b{color:var(--ng)} .kpi.pp b{color:var(--purple)}
+
+.todaywrap{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.ring{width:132px;height:132px;flex-shrink:0}
+.ring text{font-family:inherit}
+.todayside{flex:1;min-width:170px}
+.todayside .big{font-size:17px;font-weight:700;line-height:1.5}
+.todayside .big em{font-style:normal;color:var(--bb);font-size:23px}
+.legendrow{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--sub);margin-top:8px}
+.legendrow i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:4px;vertical-align:middle}
+
+.bar14{display:flex;align-items:flex-end;gap:4px;height:96px;margin-top:16px}
+.bar14 .b{flex:1;background:var(--bb-soft);border-radius:4px 4px 0 0;position:relative;min-height:2px;height:100%}
+.bar14 .b i{position:absolute;bottom:0;left:0;right:0;background:var(--bb);border-radius:4px 4px 0 0;display:block}
+.bar14 .b i.met{background:var(--ok)}
+.bar14 .b span{position:absolute;left:0;right:0;text-align:center;font-size:9.5px;color:var(--sub)}
+.bar14 .b em{position:absolute;bottom:-17px;left:0;right:0;text-align:center;font-size:9px;
+  color:var(--sub);font-style:normal}
+.bar14.fc .b i{background:var(--warn)}
+.barxlab{height:18px}
+.goalline{position:relative;height:0}
+.goalline i{position:absolute;left:0;right:0;border-top:1.5px dashed var(--ok);display:block}
+.goalline span{position:absolute;right:0;font-size:9.5px;color:var(--ok);background:var(--card);padding:0 4px}
+
+.stackbar{display:flex;height:26px;border-radius:6px;overflow:hidden;border:1px solid var(--line);margin-top:6px}
+.stackbar div{height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;
+  color:#fff;font-weight:600;min-width:0;overflow:hidden}
+
+.heatgrid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:3px;margin-top:8px;
+  overflow-x:auto;padding-bottom:2px}
+.heatcell{width:13px;height:13px;border-radius:3px;background:#ece9ee}
+.heatcell[data-l="1"]{background:#ded5f0}
+.heatcell[data-l="2"]{background:#b09fd8}
+.heatcell[data-l="3"]{background:var(--bb)}
+.heatcell[data-l="4"]{background:var(--ok)}
+
+.msrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.msrow:last-child{border-bottom:0}
+.msrow .ic{font-size:19px;width:26px;text-align:center;flex-shrink:0}
+.msrow .tx{flex:1;min-width:0}
+.msrow .tx b{font-size:13.5px;font-weight:600}
+.msrow .tx div{font-size:11px;color:var(--sub)}
+.msbar{height:5px;background:var(--line);border-radius:999px;overflow:hidden;margin-top:4px}
+.msbar i{display:block;height:100%;background:var(--bb);border-radius:999px}
+.msrow.got .tx b{color:var(--ok)}
+.msrow.locked .ic{filter:grayscale(1);opacity:.45}
+
+.word-item{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.word-item .w{font-weight:700;font-size:15.5px;font-family:var(--mincho)}
+.word-item .m{color:var(--sub);font-size:12.5px;margin-top:2px}
+.tagpill{display:inline-block;font-size:9.5px;padding:2px 7px;border-radius:999px;margin-left:6px;
+  vertical-align:middle;font-weight:600;color:#fff}
+.tagpill.word{background:var(--d-word)}
+.tagpill.aux{background:var(--d-aux)}
+.tagpill.kei{background:var(--d-kei)}
+.tagpill.ident{background:var(--d-ident)}
+.empty{text-align:center;color:var(--sub);padding:36px 0;font-size:13.5px}
+
+.stchip{font-size:11px;border-radius:5px;padding:1px 7px;white-space:nowrap;font-weight:600}
+.stchip.new{background:var(--bb-soft);color:var(--bb)}
+.stchip.s0{background:var(--ng-soft);color:var(--ng)}
+.stchip.s1{background:#fbf1e2;color:var(--warn)}
+.stchip.s2{background:#eaeffa;color:#2f5d9e}
+.stchip.s3{background:var(--ok-soft);color:var(--ok)}
+
+/* フラッシュカード */
+.fcwrap{max-width:560px;margin:0 auto;text-align:center}
+.fcprog{font-size:12.5px;color:var(--sub);margin:6px 0 10px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.fcprog .dq{color:var(--ng);font-weight:600}
+.fcprog .nq{color:var(--bb);font-weight:600}
+.fcprog .tm{color:var(--warn);font-weight:600;font-variant-numeric:tabular-nums}
+.fcprog .tm.low{color:var(--ng)}
+.fcard{border:1.5px solid var(--line);border-radius:16px;background:#fff;min-height:240px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px 20px;
+  cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.fcard.nosel{cursor:default}
+.fcard .fw{font-size:32px;font-weight:700;font-family:var(--mincho);word-break:break-word;line-height:1.4}
+.fcard .fpos{font-size:11.5px;color:var(--sub);margin-top:6px}
+.fcard .fjp{font-size:20px;margin-top:12px;line-height:1.6}
+.fcard .fmeta{font-size:13px;color:var(--sub);margin-top:10px;line-height:1.7}
+.fcard .fmeta b{color:var(--ink)}
+.fcard .fex{font-size:14px;margin-top:14px;font-family:var(--mincho);
+  border-top:1px solid var(--line);padding-top:12px;text-align:left;line-height:1.85;width:100%}
+.fcard .fex .jp{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;
+  font-size:12.5px;color:var(--sub);display:block;margin-top:3px}
+.fcard .fnote{font-size:12.5px;color:var(--warn);margin-top:12px;text-align:left;width:100%;line-height:1.7}
+.fcard .fstate{font-size:11px;color:var(--sub);margin-top:12px}
+.fcard .hint{font-size:12px;color:var(--sub);margin-top:16px}
+.katsu{display:flex;gap:0;margin-top:12px;width:100%;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.katsu div{flex:1;min-width:0;text-align:center;font-size:12px;padding:5px 2px;border-right:1px solid var(--line);
+  font-family:var(--mincho)}
+.katsu div:last-child{border-right:0}
+.katsu div span{display:block;font-size:9px;color:var(--sub);font-family:inherit}
+.spk{border:0;background:none;cursor:pointer;font-size:16px;padding:0 4px;vertical-align:middle}
+
+/* 4択 */
+.qsent{font-family:var(--mincho);font-size:21px;line-height:1.9;text-align:center;word-break:break-word}
+.qsent mark{background:#fbeef1;color:var(--d-ident);padding:0 3px;border-radius:3px;
+  border-bottom:2px solid var(--d-ident);font-weight:700}
+.qhint{font-size:12.5px;color:var(--sub);margin-top:10px}
+.choices{display:flex;flex-direction:column;gap:8px;margin-top:16px;width:100%}
+.choice{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:11px 14px;
+  cursor:pointer;font-family:inherit;font-size:14px;text-align:left;display:flex;gap:9px;align-items:flex-start;
+  touch-action:manipulation;color:var(--ink)}
+.choice:hover{background:#faf9fb}
+.choice kbd{flex-shrink:0;border:1px solid var(--line);border-radius:4px;padding:0 6px;font-size:11px;
+  color:var(--sub);font-family:inherit;line-height:1.6}
+.choice.correct{border-color:var(--ok);background:var(--ok-soft)}
+.choice.wrong{border-color:var(--ng);background:var(--ng-soft)}
+.choice.dim{opacity:.55}
+.verdict{margin-top:14px;border-radius:10px;padding:12px 14px;font-size:13.5px;text-align:left;line-height:1.75}
+.verdict.o{background:var(--ok-soft);border:1px solid #bfdccd;color:#1c5236}
+.verdict.x{background:var(--ng-soft);border:1px solid #edc4cc;color:#7d2b3b}
+.verdict .tip{display:block;margin-top:6px;font-size:12.5px;color:var(--sub)}
+
+.fcbtns{display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.rbtn{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:9px 6px;
+  cursor:pointer;font-family:inherit;min-width:80px;flex:1;max-width:130px;touch-action:manipulation}
+.rbtn:hover{background:#faf9fb}
+.rbtn b{display:block;font-size:13.5px}
+.rbtn small{display:block;font-size:10px;color:var(--sub);margin-top:2px}
+.rbtn kbd{display:inline-block;font-size:9.5px;color:var(--sub);border:1px solid var(--line);
+  border-radius:3px;padding:0 4px;margin-top:3px}
+.rbtn.r1{border-color:var(--ng)} .rbtn.r1 b{color:var(--ng)}
+.rbtn.r2{border-color:var(--warn)} .rbtn.r2 b{color:var(--warn)}
+.rbtn.r3{border-color:var(--bb)} .rbtn.r3 b{color:var(--bb)}
+.rbtn.r4{border-color:var(--ok)} .rbtn.r4 b{color:var(--ok)}
+.rbtn.sug{box-shadow:0 0 0 3px rgba(106,79,163,.18)}
+.kbdrow{font-size:11px;color:var(--sub);margin-top:14px;display:none}
+.kbdrow kbd{border:1px solid var(--line);border-radius:4px;padding:1px 5px;background:#faf9fb;
+  font-family:inherit;font-size:10.5px}
+@media (hover:hover) and (pointer:fine){ .kbdrow{display:block} }
+
+.progress{height:5px;background:var(--line);border-radius:999px;margin-bottom:12px;overflow:hidden}
+.progress>div{height:100%;background:linear-gradient(90deg,var(--bb),var(--d-ident));transition:width .3s}
+
+.banner{border-radius:10px;padding:12px 14px;font-size:13px;margin-bottom:14px;line-height:1.6}
+.banner.bb{background:var(--bb-soft);border:1px solid #d8cdf0;color:#3d2c66}
+.banner.ok{background:var(--ok-soft);border:1px solid #bfdccd;color:#1c5236}
+.banner.warn{background:#fbf1e2;border:1px solid #eeddbc;color:#7a4310}
+
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);
+  background:#1e1b20;color:#fff;padding:10px 20px;border-radius:999px;font-size:13px;z-index:99;
+  opacity:0;transition:opacity .25s;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+.hidden{display:none !important}
+.devbadge{font-size:11px;background:var(--bb-soft);color:var(--bb);display:inline-block;
+  padding:2px 9px;border-radius:999px;font-weight:600}
+
+@media (max-width:480px){
+  .fcard .fw{font-size:27px}
+  .qsent{font-size:18px}
+  .rbtn{min-width:70px}
+  .ring{width:112px;height:112px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>📜 <span>古文</span>テスト</h1>
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="btn ghost sm" id="ttsBtn" title="読み上げ ON/OFF">🔊</button>
+      <div class="streak" id="netLabel"></div>
+      <div class="streak" id="streakLabel"></div>
+    </div>
+  </header>
+
+  <nav>
+    <button data-tab="test" class="active">学習</button>
+    <button data-tab="stats">分析</button>
+    <button data-tab="list">一覧</button>
+    <button data-tab="sync">同期</button>
+  </nav>
+
+  <!-- ============ 学習タブ ============ -->
+  <div id="tab-test" class="tab">
+    <div id="modeSelect">
+      <div id="todayBanner"></div>
+
+      <div class="card">
+        <h2>何をやる</h2>
+        <div class="deckgrid" id="deckGrid"></div>
+        <p class="tiny" id="deckHint" style="margin-top:8px"></p>
+      </div>
+
+      <div class="card">
+        <h2>今日のプラン</h2>
+        <div class="plangrid" id="planGrid"></div>
+        <p class="tiny" id="planHint" style="margin-top:8px"></p>
+      </div>
+
+      <div class="card">
+        <h2>設定</h2>
+        <div class="chiprow"><span class="chip grp">出題範囲</span><span id="scopeChips" style="display:contents"></span></div>
+        <div class="chiprow"><span class="chip grp">時間の目安</span><span id="timeChips" style="display:contents"></span></div>
+        <div class="chiprow"><span class="chip grp">問題数の上限</span><span id="sizeChips" style="display:contents"></span></div>
+        <div class="chiprow"><span class="chip grp">新規の上限</span><span id="newChips" style="display:contents"></span></div>
+        <div class="chiprow"><span class="chip grp">レベル</span><span id="lvlChips" style="display:contents"></span></div>
+        <div class="chiprow"><span class="chip grp">オプション</span>
+          <span class="chip" id="chipNef">初回「簡単」だった項目を除く</span></div>
+        <div class="row hidden" id="rangeRow" style="margin-top:6px">
+          <input type="number" id="rangeFrom" min="1" placeholder="開始No.">
+          <input type="number" id="rangeTo" min="1" placeholder="終了No.（空欄可）">
+        </div>
+        <p class="tiny" id="estLine" style="margin:12px 0 0"></p>
+        <button class="btn big block" id="startBtn" style="margin-top:12px">▶ 学習を開始</button>
+      </div>
+
+      <div class="card">
+        <h2>1日の目標</h2>
+        <div class="chiprow"><span class="chip grp">項目数/日</span><span id="goalChips" style="display:contents"></span></div>
+        <div class="chiprow"><span class="chip grp">時間/日</span><span id="tgoalChips" style="display:contents"></span></div>
+        <div id="designNote"></div>
+      </div>
+    </div>
+
+    <div id="quizArea" class="hidden">
+      <div class="progress"><div id="progressBar" style="width:0%"></div></div>
+      <div id="fcRoot"></div>
+    </div>
+  </div>
+
+  <!-- ============ 分析タブ ============ -->
+  <div id="tab-stats" class="tab hidden">
+    <div id="statsRoot"></div>
+  </div>
+
+  <!-- ============ 一覧タブ ============ -->
+  <div id="tab-list" class="tab hidden">
+    <div class="row" style="margin-bottom:10px">
+      <input type="text" id="searchBox" placeholder="🔍 検索（見出し・意味・例文）">
+    </div>
+    <div class="chiprow"><span class="chip grp">デッキ</span><span id="listDeckChips" style="display:contents"></span></div>
+    <div class="chiprow"><span class="chip grp">状態</span><span id="listStChips" style="display:contents"></span></div>
+    <div class="row" style="margin-bottom:12px">
+      <select id="sortBy">
+        <option value="no">番号順</option>
+        <option value="due">復習期限順</option>
+        <option value="status">状態順</option>
+        <option value="lap">つまずき順</option>
+      </select>
+    </div>
+    <div class="muted" id="listCount" style="margin-bottom:8px"></div>
+    <div id="itemList"></div>
+    <div class="row" style="margin-top:10px" id="listMoreRow"></div>
+  </div>
+
+  <!-- ============ 同期タブ ============ -->
+  <div id="tab-sync" class="tab hidden">
+    <div class="card">
+      <h2>この端末について</h2>
+      <p class="muted">古文データはこのページ自体に埋め込まれているのでサーバーは要りません。学習の進み具合だけがこの端末のブラウザ内に保存されます。スマホとPCは自動では繋がらないので、合わせたいときにこの画面から手動で同期してください。</p>
+      <p style="margin-top:10px"><span class="devbadge" id="deviceBadge"></span></p>
+      <p class="muted" style="margin-top:6px" id="syncInfo"></p>
+    </div>
+    <div class="card">
+      <h2>📤 このデバイスの進捗を書き出す</h2>
+      <div class="row">
+        <button class="btn" id="exportFileBtn">ファイルで保存</button>
+        <button class="btn ghost" id="exportCodeBtn">コードをコピー</button>
+      </div>
+      <textarea id="exportCodeArea" class="hidden" style="margin-top:10px" readonly onclick="this.select()"></textarea>
+      <p class="muted hidden" id="exportCodeHint" style="margin-top:6px">コピーできない場合は上のテキストを長押しして手動でコピーしてください。</p>
+    </div>
+    <div class="card">
+      <h2>📥 別の端末の進捗を取り込む</h2>
+      <p class="muted" style="margin-bottom:10px">項目ごとに新しい方の記録を採用してマージします。記録が消えることはありません。</p>
+      <div class="row"><button class="btn ghost" id="importFileBtn">ファイルを選ぶ</button></div>
+      <input type="file" id="importFile" accept=".json" class="hidden">
+      <label class="tiny" style="display:block;margin-top:14px;margin-bottom:4px">またはコードを貼り付け</label>
+      <textarea id="importCodeArea" placeholder="ここにコピーしたコードを貼り付け"></textarea>
+      <button class="btn ghost sm" id="importCodeBtn" style="margin-top:8px">コードから取り込む</button>
+    </div>
+    <div class="card">
+      <h2>危険ゾーン</h2>
+      <button class="btn danger sm" id="resetBtn">この端末の学習記録を全消去</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script id="itemdata" type="application/json">[{"d":"word","q":"あさまし","s":"形シク","a":"驚きあきれるほどだ；情けない・見苦しい","x":"「あさましき事、限りなし」","xj":"驚きあきれることは、この上ない。","n":"良い意味でも悪い意味でも「驚く」が根。現代語の「あさましい（下品）」とは別。","lv":1,"no":1},{"d":"word","q":"あたらし（惜し）","s":"形シク","a":"惜しい・もったいない","x":"「あたら夜の月と花とを同じくは」","xj":"惜しい（すばらしい）夜の月と花とを、同じことなら…","n":"「新し」は別語（あらたし）。「あたら〜」の形で「惜しくも〜」。","lv":1,"no":2},{"d":"word","q":"あぢきなし","s":"形ク","a":"どうしようもない・不本意だ；つまらない","x":"「あぢきなくおぼえ給ふ」","xj":"どうしようもなくお思いになる。","n":"自分の力ではどうにもならない不本意さ。","lv":1,"no":3},{"d":"word","q":"あへなし","s":"形ク","a":"どうしようもない・張り合いがない","x":"「あへなく心細し」","xj":"どうしようもなく心細い。","n":"「敢へ（こらえる）＋なし」。","lv":3,"no":4},{"d":"word","q":"あやし（怪し・奇し）","s":"形シク","a":"不思議だ・変だ","x":"「あやしうこそものぐるほしけれ」","xj":"妙に狂ったような気持ちになることだ。","n":"「怪し＝不思議」と「賤し＝身分が低い・粗末」を文脈で判別する。","lv":1,"no":5},{"d":"word","q":"あやし（賤し）","s":"形シク","a":"身分が低い・粗末だ・みすぼらしい","x":"「あやしき民の家」","xj":"身分の低い庶民の家。","n":"同音の「怪し」と必ずセットで覚える。","lv":1,"no":6},{"d":"word","q":"あやなし","s":"形ク","a":"筋が通らない・わけがわからない・無意味だ","x":"「あやなくも隔てけるかな」","xj":"わけもなく隔てを置いてしまったことだ。","n":"「文（あや）無し」＝筋道が無い。","lv":2,"no":7},{"d":"word","q":"あらまほし","s":"形シク","a":"理想的だ・望ましい","x":"「少しのことにも先達はあらまほしき事なり」","xj":"ちょっとしたことにも案内者はあってほしいものだ。","n":"動詞「あり」＋助動詞「まほし」が形容詞化したもの。","lv":1,"no":8},{"d":"word","q":"ありがたし","s":"形ク","a":"めったにない・まれだ；生きていくのが難しい","x":"「ありがたきもの、舅にほめらるる婿」","xj":"めったにないもの。舅にほめられる婿。","n":"「有り難し」＝存在しにくい。感謝の意は近世以降。","lv":1,"no":9},{"d":"word","q":"いたし（甚し・痛し）","s":"形ク","a":"程度がはなはだしい；すばらしい；つらい","x":"「いと、いたう痛む」","xj":"たいそうひどく痛む。","n":"「いたく」は「たいそう」。打消と組んで「いたく〜ず＝たいして〜ない」。","lv":1,"no":10},{"d":"word","q":"いたはし","s":"形シク","a":"大切にしたい・いたわしい；骨が折れる","x":"「いたはしく思ひきこゆ」","xj":"大切にお思い申し上げる。","n":"「労（いた）はる」の形容詞形。","lv":2,"no":11},{"d":"word","q":"いたづらなり","s":"形動ナリ","a":"むだだ・無意味だ；何もすることがない","x":"「いたづらに日を過ごす」","xj":"むだに日を過ごす。","n":"「徒（いたづら）」。死ぬ意の「いたづらになる」も頻出。","lv":1,"no":12},{"d":"word","q":"いつしか","s":"副","a":"早く〜たいものだ；いつのまにか","x":"「いつしか梅咲かなむ」","xj":"早く梅が咲いてほしい。","n":"願望の助詞（なむ・ばや）と呼応すると「早く〜たい」。","lv":1,"no":13},{"d":"word","q":"いとけなし（幼し）","s":"形ク","a":"幼い・あどけない","x":"「いとけなき人を残して」","xj":"幼い子を残して。","n":"「いはけなし」も同義。","lv":2,"no":14},{"d":"word","q":"いとほし","s":"形シク","a":"気の毒だ・かわいそうだ；かわいい","x":"「いとほしと思して」","xj":"気の毒だとお思いになって。","n":"現代語「愛しい」より「気の毒」が第一義。","lv":1,"no":15},{"d":"word","q":"いふかひなし（言ふ甲斐無し）","s":"形ク","a":"言ってもしかたがない・どうしようもない；身分が低い","x":"「いふかひなくなり給ひぬ」","xj":"どうしようもなく（＝お亡くなりに）なってしまった。","n":"「いふかひなくなる」は死の婉曲表現。","lv":1,"no":16},{"d":"word","q":"いぶかし","s":"形シク","a":"知りたい・気がかりだ；不審だ","x":"「いぶかしく思ふ」","xj":"知りたく思う。","n":"「いぶせし（気が晴れない）」と区別。","lv":2,"no":17},{"d":"word","q":"いまいまし（忌ま忌まし）","s":"形シク","a":"縁起が悪い・慎むべきだ","x":"「いまいましきことなれば」","xj":"縁起が悪いことなので。","n":"現代語の「忌々しい（腹立たしい）」とは違う。","lv":3,"no":18},{"d":"word","q":"いみじ","s":"形シク","a":"程度がはなはだしい（よくも悪くも）；すばらしい；ひどい","x":"「いみじう泣く」","xj":"ひどく泣く。","n":"プラスかマイナスかは文脈で決める最重要多義語。","lv":1,"no":19},{"d":"word","q":"いやし（卑し・賤し）","s":"形シク","a":"身分が低い；下品だ・見苦しい","x":"「いやしき者の家」","xj":"身分の低い者の家。","n":"「あやし（賤し）」とほぼ同義。","lv":2,"no":20},{"d":"word","q":"うし（憂し）","s":"形ク","a":"つらい・いやだ・気が進まない","x":"「世の中憂しと思ひて」","xj":"世の中をつらいと思って。","n":"自分の内側から湧くつらさ。相手の仕打ちで感じる「つらし」と対。","lv":1,"no":21},{"d":"word","q":"うしろめたし","s":"形ク","a":"気がかりだ・心配だ","x":"「後ろめたく思す」","xj":"気がかりにお思いになる。","n":"「後ろ＋目痛し」。反対語は「うしろやすし」。","lv":1,"no":22},{"d":"word","q":"うしろやすし","s":"形ク","a":"安心だ・気がかりでない","x":"「うしろやすく思ひ給ふ」","xj":"安心にお思いになる。","n":"「うしろめたし」の対義語としてセットで覚える。","lv":2,"no":23},{"d":"word","q":"うたてし","s":"形ク","a":"いやだ・不快だ・情けない","x":"「うたてある事なり」","xj":"いやなことである。","n":"副詞「うたて」は「ますますひどく・いやなことに」。","lv":1,"no":24},{"d":"word","q":"うつくし（美し・愛し）","s":"形シク","a":"かわいらしい・いとおしい；美しい","x":"「いとうつくしうてゐたり」","xj":"たいそうかわいらしい様子で座っている。","n":"第一義は「小さいものへの愛情」。","lv":1,"no":25},{"d":"word","q":"うるはし（麗し・美し）","s":"形シク","a":"きちんとして立派だ・整っている；美しい","x":"「うるはしき姿」","xj":"きちんと整った立派な姿。","n":"「なまめかし（優美）」と対比。端正・正式が根。","lv":1,"no":26},{"d":"word","q":"おいらかなり","s":"形動ナリ","a":"おっとりしている・素直だ","x":"「おいらかなる人」","xj":"おっとりした人。","n":"「おいらか＝癖がなく穏やか」。","lv":3,"no":27},{"d":"word","q":"おそろし（恐ろし）","s":"形シク","a":"恐ろしい；（程度が）はなはだしい","x":"「おそろしげなる者」","xj":"恐ろしそうな者。","n":"「おどろおどろし（大げさだ）」と区別。","lv":2,"no":28},{"d":"word","q":"おどろおどろし","s":"形シク","a":"大げさだ・仰々しい；不気味だ","x":"「おどろおどろしく言ひなす」","xj":"大げさに言い立てる。","n":"音・様子が過剰であること。","lv":2,"no":29},{"d":"word","q":"おぼつかなし","s":"形ク","a":"はっきりしない・気がかりだ；待ち遠しい","x":"「おぼつかなく思ひ渡る」","xj":"気がかりに思い続ける。","n":"「不明瞭→不安→会いたい」と意味が伸びる。","lv":1,"no":30},{"d":"word","q":"おほかたなり","s":"形動ナリ","a":"通り一遍だ・格別でない","x":"「おほかたなるもてなし」","xj":"通り一遍の扱い。","n":"副詞「おほかた（だいたい・全然）」も頻出。","lv":3,"no":31},{"d":"word","q":"おもしろし","s":"形ク","a":"趣がある・風流だ；美しい","x":"「月おもしろき夜」","xj":"月が美しく趣のある夜。","n":"現代語の「面白い（滑稽）」ではない。","lv":1,"no":32},{"d":"word","q":"かうがうし（神々し）","s":"形シク","a":"神々しい・気高い","x":"「かうがうしき山なり」","xj":"神々しい山。","n":"「かみさびたり」も同系。","lv":3,"no":33},{"d":"word","q":"かしこし（畏し・賢し）","s":"形ク","a":"恐れ多い；並々でない・優れている","x":"「かしこき仰せ言」","xj":"恐れ多い（帝の）お言葉。","n":"「かしこまる」と同根。「賢い」は派生。","lv":1,"no":34},{"d":"word","q":"かしがまし","s":"形シク","a":"やかましい・騒々しい","x":"「かしがましきまで鳴く」","xj":"やかましいほどに鳴く。","n":"「かまびすし」も同義。","lv":3,"no":35},{"d":"word","q":"かたはらいたし（傍ら痛し）","s":"形ク","a":"みっともない・気恥ずかしい；気の毒だ","x":"「かたはらいたく見ゆ」","xj":"みっともなく見える。","n":"そばで見ていて心が痛む、が原義。","lv":1,"no":36},{"d":"word","q":"かたし（難し）","s":"形ク","a":"難しい；めったにない","x":"「別れは易く、会ふはかたし」","xj":"別れることは易しいが会うことは難しい。","n":"「〜がたし」の形で複合語をつくる（ありがたし・忘れがたし）。","lv":2,"no":37},{"d":"word","q":"かなし（愛し）","s":"形シク","a":"いとしい・かわいい","x":"「子を愛しと思ふ」","xj":"子をいとしく思う。","n":"「悲し」と同音。「愛し」の用法が古文では多い。","lv":1,"no":38},{"d":"word","q":"かひなし（甲斐無し）","s":"形ク","a":"効き目がない・どうにもならない","x":"「言ふかひなし」","xj":"言ってもどうにもならない。","n":"「かひ＝効果」。","lv":2,"no":39},{"d":"word","q":"きよげなり","s":"形動ナリ","a":"さっぱりと美しい・こぎれいだ","x":"「きよげなる童」","xj":"こぎれいな子ども。","n":"最上級の美は「きよらなり」。","lv":2,"no":40},{"d":"word","q":"きよらなり","s":"形動ナリ","a":"気品があって美しい・端麗だ","x":"「きよらなる玉の男御子」","xj":"気品高く美しい玉のような男の御子。","n":"「きよげ」より一段上の美。","lv":1,"no":41},{"d":"word","q":"くちをし（口惜し）","s":"形シク","a":"残念だ・がっかりだ；つまらない","x":"「くちをしう思ふ」","xj":"残念に思う。","n":"期待に届かない失望。","lv":1,"no":42},{"d":"word","q":"けし（異し・怪し）","s":"形シク","a":"普通と違う・変だ","x":"「けしき事」","xj":"変わったこと。","n":"「けしうはあらず＝悪くはない」の形が頻出。","lv":3,"no":43},{"d":"word","q":"けしからず","s":"連語","a":"異様だ・とんでもない","x":"「けしからぬ事」","xj":"とんでもないこと。","n":"形容詞「けし」の未然形「けしから」＋打消「ず」。程度が甚だしい意。","lv":3,"no":44},{"d":"word","q":"けぢかし（気近し）","s":"形ク","a":"親しみやすい・身近だ","x":"「けぢかくもてなす」","xj":"親しみやすく応対する。","n":"対は「けどほし（よそよそしい）」。","lv":3,"no":45},{"d":"word","q":"こころうし（心憂し）","s":"形ク","a":"つらい・いやだ・情けない","x":"「心憂きことなり」","xj":"情けないことだ。","n":"「うし」の強調形。動詞「心得（こころう）」と混同しない。","lv":1,"no":46},{"d":"word","q":"こころにくし（心憎し）","s":"形ク","a":"奥ゆかしい・上品で心ひかれる","x":"「心にくきけはひ」","xj":"奥ゆかしい様子。","n":"「憎い」ではなく「深みがあって惹かれる」。","lv":1,"no":47},{"d":"word","q":"こころもとなし","s":"形ク","a":"待ち遠しい・じれったい；不安だ","x":"「心もとなく待つ」","xj":"じれったく待つ。","n":"「もとな＝根拠なく」。落ち着かない気持ち。","lv":1,"no":48},{"d":"word","q":"こちたし（言痛し）","s":"形ク","a":"大げさだ・煩わしいほど多い","x":"「こちたく言ひなす」","xj":"大げさに言う。","n":"「言（こと）甚（いた）し」の変化。","lv":3,"no":49},{"d":"word","q":"さうざうし","s":"形シク","a":"物足りない・心さびしい","x":"「さうざうしく思ふ」","xj":"物足りなく思う。","n":"「騒々しい」ではない。漢字は「索々し」。","lv":1,"no":50},{"d":"word","q":"さがなし（性無し）","s":"形ク","a":"性質が悪い・意地が悪い；口やかましい","x":"「さがなき者ども」","xj":"意地の悪い者たち。","n":"「さが＝生まれつきの性質」。","lv":3,"no":51},{"d":"word","q":"さかし（賢し）","s":"形シク","a":"賢い・しっかりしている；利口ぶっている","x":"「さかしき人」","xj":"賢い人。","n":"悪い意味では「こざかしい」。","lv":2,"no":52},{"d":"word","q":"さすがなり","s":"形動ナリ","a":"そうはいってもやはり","x":"「さすがに捨てがたし」","xj":"そうはいってもやはり捨てがたい。","n":"副詞「さすがに」が頻出。","lv":2,"no":53},{"d":"word","q":"すさまじ（凄じ）","s":"形シク","a":"興ざめだ・殺風景だ；ものすごい","x":"「すさまじきもの、昼ほゆる犬」","xj":"興ざめなもの。昼に吠える犬。","n":"『枕草子』の章段名で有名。","lv":1,"no":54},{"d":"word","q":"すずろなり（漫ろなり）","s":"形動ナリ","a":"なんとなく・むやみに；思いがけない","x":"「すずろに涙こぼる」","xj":"なんとなく涙がこぼれる。","n":"「そぞろなり」とも。理由のなさが根。","lv":1,"no":55},{"d":"word","q":"せうと（兄人）","s":"名","a":"兄弟（女性から見た）","x":"「せうとの少将」","xj":"（女君の）兄である少将。","n":"「いもうと」の対。","lv":3,"no":56},{"d":"word","q":"せちなり（切なり）","s":"形動ナリ","a":"切実だ・ひたむきだ；ぜひとも","x":"「せちに思ふ」","xj":"切実に思う。","n":"副詞「せちに＝ぜひとも」。","lv":3,"no":57},{"d":"word","q":"たえて（絶えて）","s":"副","a":"まったく（〜ない）","x":"「たえて桜のなかりせば」","xj":"まったく桜が無かったならば。","n":"下に打消・反実仮想を伴う。","lv":2,"no":58},{"d":"word","q":"たのむ（頼む）","s":"動マ四／マ下二","a":"四段＝あてにする／下二段＝あてにさせる","x":"「頼めしを なほや待たまし」","xj":"あてにさせた（あの言葉）を、やはり待つべきだろうか。","n":"四段と下二段で意味が逆になる代表例。下二段は「期待させる」。","lv":1,"no":59},{"d":"word","q":"つきづきし（付き付きし）","s":"形シク","a":"似つかわしい・ふさわしい","x":"「いとつきづきし」","xj":"たいそう似つかわしい。","n":"対は「つきなし（不釣り合いだ）」。","lv":1,"no":60},{"d":"word","q":"つとめて","s":"名","a":"早朝；（何かがあった）翌朝","x":"「冬はつとめて」","xj":"冬は早朝（がよい）。","n":"『枕草子』冒頭。前夜の出来事を受ける用法に注意。","lv":1,"no":61},{"d":"word","q":"つれづれなり（徒然なり）","s":"形動ナリ","a":"することがなく退屈だ・しみじみもの寂しい","x":"「つれづれなるままに」","xj":"することがなく退屈なのにまかせて。","n":"『徒然草』序段。","lv":1,"no":62},{"d":"word","q":"つれなし","s":"形ク","a":"そしらぬ顔だ・平然としている；冷淡だ","x":"「つれなくもてなす」","xj":"そしらぬ顔でふるまう。","n":"「連れ無し＝関わりが無い」。","lv":1,"no":63},{"d":"word","q":"としごろ（年頃）","s":"名","a":"長年の間・数年来","x":"「年ごろ思ひつること」","xj":"長年思ってきたこと。","n":"「月ごろ＝数か月」「日ごろ＝数日」も同型。","lv":1,"no":64},{"d":"word","q":"なかなか","s":"副／形動","a":"かえって；なまじっか","x":"「なかなか言はぬがよし」","xj":"かえって言わないほうがよい。","n":"「中途半端」が根。現代語「なかなか（かなり）」と別。","lv":1,"no":65},{"d":"word","q":"なさけなし（情けなし）","s":"形ク","a":"思いやりがない・風流を解さない","x":"「なさけなき人」","xj":"情趣を解さない人。","n":"「情け＝思いやり／風流心」。","lv":2,"no":66},{"d":"word","q":"なつかし（懐かし）","s":"形シク","a":"心ひかれる・親しみやすい","x":"「なつかしき人」","xj":"心ひかれる人。","n":"過去を懐かしむ意は近世以降。","lv":1,"no":67},{"d":"word","q":"なほざりなり（等閑なり）","s":"形動ナリ","a":"いいかげんだ・おろそかだ","x":"「なほざりに書く」","xj":"いいかげんに書く。","n":"「おろかなり（不十分だ）」と近い。","lv":2,"no":68},{"d":"word","q":"なまめかし（艶めかし）","s":"形シク","a":"優美だ・若々しく上品だ","x":"「なまめかしき姿」","xj":"優美な姿。","n":"「なま＝未熟・若い」。官能的な意味ではない。","lv":1,"no":69},{"d":"word","q":"にくし（憎し）","s":"形ク","a":"気に食わない・不愉快だ","x":"「にくきもの、急ぐ事あるをりに来て」","xj":"不愉快なもの。急ぎの用があるときに来て…","n":"「愛敬なし」に近い。強い憎悪ではない。","lv":2,"no":70},{"d":"word","q":"ねんごろなり（懇ろなり）","s":"形動ナリ","a":"心をこめて丁寧だ；親密だ","x":"「ねんごろにもてなす」","xj":"心をこめてもてなす。","n":"「ねむごろ」とも表記。","lv":2,"no":71},{"d":"word","q":"のどけし（長閑けし）","s":"形ク","a":"のどかだ・穏やかだ","x":"「のどけき春の日」","xj":"のどかな春の日。","n":"「のどかなり」も同義。","lv":3,"no":72},{"d":"word","q":"はかなし","s":"形ク","a":"頼りない・あっけない；ちょっとした","x":"「はかなき事」","xj":"ちょっとしたこと／頼りないこと。","n":"「はか＝目当て・進み具合」が無い。","lv":1,"no":73},{"d":"word","q":"はしたなし","s":"形ク","a":"中途半端だ；きまりが悪い・体裁が悪い","x":"「はしたなき心地す」","xj":"きまりの悪い気持ちがする。","n":"「端（はした）」＝どっちつかず。","lv":1,"no":74},{"d":"word","q":"びんなし（便無し）","s":"形ク","a":"不都合だ・具合が悪い；気の毒だ","x":"「びんなき事なり」","xj":"不都合なことである。","n":"「ふびんなり（不便）」も同系。","lv":2,"no":75},{"d":"word","q":"ふびんなり（不便なり）","s":"形動ナリ","a":"かわいそうだ；具合が悪い","x":"「ふびんに思す」","xj":"かわいそうにお思いになる。","n":"漢字は「不便」だが読みは「ふびん」。","lv":2,"no":76},{"d":"word","q":"まめなり（忠実なり）","s":"形動ナリ","a":"まじめだ・誠実だ；実用的だ","x":"「まめなる男」","xj":"まじめな男。","n":"対は「あだなり（浮気だ・はかない）」。","lv":1,"no":77},{"d":"word","q":"まもる（守る・目守る）","s":"動ラ四","a":"じっと見つめる","x":"「顔をまもる」","xj":"顔をじっと見つめる。","n":"「目＋守る」。防御の意より視線の意。","lv":2,"no":78},{"d":"word","q":"むつかし（難し）","s":"形シク","a":"不快だ・わずらわしい；気味が悪い","x":"「むつかしき事」","xj":"わずらわしいこと。","n":"現代語の「難しい」ではない。","lv":2,"no":79},{"d":"word","q":"めざまし（目覚まし）","s":"形シク","a":"心外だ・気に食わない；目が覚めるほど立派だ","x":"「めざましき者におとしめ嫉み給ふ」","xj":"心外な者として見下し嫉妬なさる。","n":"身分の上下感覚から来る不快感。","lv":1,"no":80},{"d":"word","q":"めづらし（珍し）","s":"形シク","a":"すばらしい・賞賛すべきだ；目新しい","x":"「めづらしき御事」","xj":"すばらしいお慶び。","n":"動詞「めづ（賞美する）」から。","lv":1,"no":81},{"d":"word","q":"めでたし","s":"形ク","a":"すばらしい・立派だ","x":"「めでたき琴の音」","xj":"すばらしい琴の音。","n":"「めづ＋いたし」。","lv":1,"no":82},{"d":"word","q":"やうやう（漸う）","s":"副","a":"しだいに・だんだん","x":"「やうやう白くなりゆく」","xj":"しだいに白くなっていく。","n":"『枕草子』冒頭。","lv":1,"no":83},{"d":"word","q":"やがて","s":"副","a":"そのまま；すぐに","x":"「やがて出で給ひぬ」","xj":"そのまますぐにお出になった。","n":"「そのうち」の意は現代語。","lv":1,"no":84},{"d":"word","q":"やさし（優し・恥し）","s":"形シク","a":"きまりが悪い・恥ずかしい；優美だ","x":"「やさしくおぼゆ」","xj":"きまり悪く思われる。","n":"「痩す」から。身が細る思い。","lv":2,"no":85},{"d":"word","q":"やすし（易し・安し）","s":"形ク","a":"たやすい；心が安らかだ","x":"「やすき事なり」","xj":"たやすいことである。","n":"「やすからず＝心穏やかでない」。","lv":2,"no":86},{"d":"word","q":"ゆかし","s":"形シク","a":"見たい・聞きたい・知りたい；心ひかれる","x":"「ゆかしがりて」","xj":"知りたがって。","n":"「行かし」＝心が向かう。対象は文脈で判断。","lv":1,"no":87},{"d":"word","q":"ゆゆし（由々し）","s":"形シク","a":"不吉だ・恐れ多い；程度がはなはだしい","x":"「ゆゆしき事」","xj":"不吉なこと。","n":"神聖で触れてはならない、が原義。","lv":1,"no":88},{"d":"word","q":"よし（由）","s":"名","a":"理由・いわれ；風情；手段","x":"「そのよしを申す」","xj":"その事情を申し上げる。","n":"「よしなし＝つまらない・関係ない」。","lv":1,"no":89},{"d":"word","q":"よしなし（由無し）","s":"形ク","a":"つまらない・無益だ；関係がない","x":"「よしなき事」","xj":"つまらないこと。","n":"「よし（理由・風情）」が無い。","lv":2,"no":90},{"d":"word","q":"よろし（宜し）","s":"形シク","a":"悪くない・まあまあだ","x":"「よろしき程」","xj":"まあまあの程度。","n":"「よし＞よろし＞わろし＞あし」の序列。","lv":1,"no":91},{"d":"word","q":"わたる（渡る）","s":"動ラ四","a":"移動する；ずっと〜し続ける","x":"「思ひわたる」","xj":"ずっと思い続ける。","n":"補助動詞では継続を表す。","lv":2,"no":92},{"d":"word","q":"わりなし（理無し）","s":"形ク","a":"道理に合わない・どうしようもない；むやみだ","x":"「わりなく思ふ」","xj":"むやみに思う。","n":"「理（ことわり）無し」。","lv":1,"no":93},{"d":"word","q":"わろし（悪し）","s":"形ク","a":"よくない・見劣りする","x":"「わろき筆」","xj":"よくない筆。","n":"「あし（悪い）」ほど強くない。","lv":1,"no":94},{"d":"word","q":"ゐる（居る）","s":"動ワ上一","a":"座る・じっとしている","x":"「そこにゐたり」","xj":"そこに座っている。","n":"「率る（引き連れる）」と区別。","lv":2,"no":95},{"d":"word","q":"をかし","s":"形シク","a":"趣がある・興味深い；美しい；滑稽だ","x":"「笛の音、いとをかし」","xj":"笛の音がたいそう趣深い。","n":"明るく知的な感動。しみじみとした情趣は「あはれ」。","lv":1,"no":96},{"d":"word","q":"をこがまし（痴がまし）","s":"形シク","a":"ばかげている・みっともない","x":"「をこがましき振る舞ひ」","xj":"ばかげたふるまい。","n":"「をこ（愚か）」から。現代語の「おこがましい（さしでがましい）」とは別。","lv":2,"no":97},{"d":"word","q":"をりふし（折節）","s":"名／副","a":"ちょうどその時；季節","x":"「をりふし雨降る」","xj":"ちょうどその時に雨が降る。","n":"「折（をり）＝時・場合」。","lv":2,"no":98},{"d":"word","q":"あくがる（憧る）","s":"動ラ下二","a":"さまよい出る・心が体から離れる","x":"「魂もあくがるる心地」","xj":"魂も体から離れさまよう心地。","n":"「あく（所）＋離（か）る」。恋の物思いで使う。","lv":1,"no":99},{"d":"word","q":"あそぶ（遊ぶ）","s":"動バ四","a":"管弦を奏でる・詩歌を楽しむ","x":"「夜もすがら遊び給ふ」","xj":"一晩中、管弦の遊びをなさる。","n":"遊戯より風流な音楽・詩歌が中心。","lv":2,"no":100},{"d":"word","q":"あづかる（与る）","s":"動ラ四","a":"関係する・かかわる；いただく","x":"「事にあづかる」","xj":"事にかかわる。","n":"「預かる（保管）」とは別。","lv":3,"no":101},{"d":"word","q":"あふ（会ふ・逢ふ）","s":"動ハ四","a":"結婚する・男女が契る；出会う","x":"「人にあふ」","xj":"人と結婚する（契る）。","n":"古文では男女関係を指すことが多い。","lv":1,"no":102},{"d":"word","q":"あまねし（普し）","s":"形ク","a":"広く行き渡っている","x":"「あまねき御恵み」","xj":"広く行き渡るご恩恵。","n":"副詞「あまねく」。","lv":3,"no":103},{"d":"word","q":"あらはなり（顕なり）","s":"形動ナリ","a":"丸見えだ・むき出しだ；明白だ","x":"「あらはにて見苦し」","xj":"丸見えで見苦しい。","n":"貴族社会では「あらはなり」は失礼。","lv":2,"no":104},{"d":"word","q":"ありく（歩く）","s":"動カ四","a":"歩き回る・出歩く","x":"「夜ありく」","xj":"夜に出歩く。","n":"「行く」との違いは「あちこち動く」。","lv":2,"no":105},{"d":"word","q":"ゐる（率る）","s":"動ワ上一","a":"引き連れる・連れて行く","x":"「妹（いも）を率（ゐ）て行く」","xj":"妻を連れて行く。","n":"「居る（座る）」と同音異義。連用形「率て」の形で出る。","lv":2,"no":106},{"d":"word","q":"いたはる（労る）","s":"動ラ四","a":"大切に世話をする；病気になる","x":"「身をいたはる」","xj":"体を大切にする。","n":"「いたはし」の動詞形。","lv":3,"no":107},{"d":"word","q":"いだす（出だす）","s":"動サ四","a":"外に出す・出発させる","x":"「文をいだす」","xj":"手紙を出す。","n":"「出づ」は自動詞、「いだす」は他動詞。","lv":3,"no":108},{"d":"word","q":"いつく（斎く）","s":"動カ四","a":"神に仕える・大切に育てる","x":"「いつき給ふ姫君」","xj":"大切に育てなさる姫君。","n":"「斎宮（いつきのみや）」の語源。","lv":3,"no":109},{"d":"word","q":"いらふ（答ふ）","s":"動ハ下二","a":"返事をする・答える","x":"「いらへもせず」","xj":"返事もしない。","n":"名詞は「いらへ」。","lv":2,"no":110},{"d":"word","q":"うつろふ（移ろふ）","s":"動ハ四","a":"色あせる・散る；心変わりする","x":"「花うつろふ」","xj":"花が色あせて散る。","n":"恋心の変化にも使う。","lv":1,"no":111},{"d":"word","q":"うるさし（煩し）","s":"形ク","a":"わずらわしい；立派すぎて気づまりだ","x":"「うるさき事」","xj":"わずらわしいこと。","n":"「うるさし」にはほめ言葉の用法もある。","lv":3,"no":112},{"d":"word","q":"おこす（遣す）","s":"動サ下二","a":"よこす・送ってくる","x":"「文をおこす」","xj":"手紙をよこす。","n":"「やる（送る）」の反対方向。","lv":2,"no":113},{"d":"word","q":"おこなふ（行ふ）","s":"動ハ四","a":"仏道修行をする・勤行する","x":"「山にこもりておこなふ」","xj":"山にこもって仏道修行をする。","n":"一般的な「行う」ではなく宗教的行為。","lv":2,"no":114},{"d":"word","q":"おどろく（驚く）","s":"動カ四","a":"目を覚ます；はっと気づく","x":"「夢よりおどろく」","xj":"夢から目を覚ます。","n":"「びっくりする」より「気づく」。","lv":1,"no":115},{"d":"word","q":"おぼす（思す）","s":"動サ四","a":"お思いになる","x":"「あはれとおぼす」","xj":"しみじみ心を動かされなさる。","n":"「思ふ」の尊敬語。さらに高いのは「おぼしめす」。","lv":1,"no":116},{"d":"word","q":"おぼゆ（覚ゆ）","s":"動ヤ下二","a":"自然と思われる；似ている；思い出される","x":"「昔おぼゆる」","xj":"昔が思い出される。","n":"「思ふ」＋自発の「ゆ」。","lv":1,"no":117},{"d":"word","q":"おぼろけなり","s":"形動ナリ","a":"並ひととおりだ；（打消と）並々でない","x":"「おぼろけならず」","xj":"並々でない。","n":"肯定・打消で意味が反転する要注意語。","lv":3,"no":118},{"d":"word","q":"おほす（仰す）","s":"動サ下二","a":"おっしゃる","x":"「かく仰せらる」","xj":"このようにおっしゃる。","n":"「言ふ」の尊敬語。","lv":1,"no":119},{"d":"word","q":"おぼしめす（思し召す）","s":"動サ四","a":"お思いになる（最高敬語）","x":"「帝、思しめすやう」","xj":"帝がお思いになるには。","n":"「おぼす」より敬意が高い。","lv":2,"no":120},{"d":"word","q":"かしづく（傅く）","s":"動カ四","a":"大切に育てる・世話をする","x":"「姫君をかしづく」","xj":"姫君を大切にお育てする。","n":"「いつく」と類義。","lv":1,"no":121},{"d":"word","q":"かづく（被く）","s":"動カ四／下二","a":"四段＝褒美をいただく／下二段＝褒美を与える","x":"「大袿（おほうちき）かづき給ふ」","xj":"大袿を褒美としていただきなさる。","n":"四段と下二段で授受の向きが逆。","lv":2,"no":122},{"d":"word","q":"きこゆ（聞こゆ）","s":"動ヤ下二","a":"申し上げる；評判になる；聞こえる","x":"「御文きこゆ」","xj":"お手紙を差し上げる。","n":"「言ふ」の謙譲語。補助動詞「〜きこゆ」も頻出。","lv":1,"no":123},{"d":"word","q":"きこしめす（聞こし召す）","s":"動サ四","a":"お聞きになる；召し上がる","x":"「御酒きこしめす」","xj":"お酒を召し上がる。","n":"「聞く・食ふ・飲む」の尊敬語。","lv":2,"no":124},{"d":"word","q":"ぐす（具す）","s":"動サ変","a":"連れ添う・連れて行く；備わる","x":"「人を具して行く」","xj":"人を連れて行く。","n":"「具（そな）はる」から。","lv":3,"no":125},{"d":"word","q":"けいす（啓す）","s":"動サ変","a":"（中宮・東宮に）申し上げる","x":"「中宮に啓す」","xj":"中宮に申し上げる。","n":"帝・上皇には「奏す」。相手で使い分ける。","lv":1,"no":126},{"d":"word","q":"こうず（困ず）","s":"動サ変","a":"疲れる・弱る","x":"「道に困じて」","xj":"道中で疲れて。","n":"「困」の字音から。","lv":3,"no":127},{"d":"word","q":"ことわる（理る）","s":"動ラ四","a":"筋道を立てて説明する・判断する","x":"「事をことわる」","xj":"事の筋道を判断する。","n":"名詞「ことわり＝道理」。","lv":3,"no":128},{"d":"word","q":"そうす（奏す）","s":"動サ変","a":"（天皇・上皇に）申し上げる","x":"「帝に奏す」","xj":"帝に申し上げる。","n":"相手が天皇・上皇に限られる絶対敬語。中宮・東宮には「啓す」。","lv":1,"no":129},{"d":"word","q":"さぶらふ（候ふ）","s":"動ハ四","a":"お仕えする；あります・ございます","x":"「御前にさぶらふ」","xj":"御前にお仕えする。","n":"「はべり」と同じく謙譲・丁寧の両用。","lv":1,"no":130},{"d":"word","q":"しのぶ（忍ぶ）","s":"動バ四／上二","a":"人目を避ける・こらえる","x":"「しのびて通ふ」","xj":"人目を忍んで通う。","n":"「偲ぶ（懐かしむ）」と混同しない。","lv":1,"no":131},{"d":"word","q":"すまふ（争ふ・辞ふ）","s":"動ハ四","a":"抵抗する・辞退する","x":"「強（し）ひてすまふ」","xj":"しいて辞退する。","n":"「相撲（すまひ）」と同根。","lv":3,"no":132},{"d":"word","q":"たまはる（賜る）","s":"動ラ四","a":"いただく（謙譲）；お与えになる（尊敬）","x":"「禄をたまはる」","xj":"褒美をいただく。","n":"文脈で謙譲か尊敬かを判断する。","lv":2,"no":133},{"d":"word","q":"たまふ（給ふ）","s":"動ハ四／ハ下二","a":"四段＝お〜になる（尊敬）／下二段＝〜ております（謙譲）","x":"「まろは知り給へず」","xj":"私は存じません。","n":"下二段は会話文・手紙で「見・聞き・思ひ・知り」に付く。","lv":1,"no":134},{"d":"word","q":"つかうまつる（仕う奉る）","s":"動ラ四","a":"お仕えする；して差し上げる","x":"「歌つかうまつる」","xj":"歌をお作り申し上げる。","n":"「仕る（つかまつる）」とも。","lv":2,"no":135},{"d":"word","q":"つかはす（遣はす）","s":"動サ四","a":"おつかわしになる・お与えになる","x":"「使ひをつかはす」","xj":"使者をおつかわしになる。","n":"「やる」の尊敬語。","lv":2,"no":136},{"d":"word","q":"つく（付く）","s":"動カ四／下二","a":"四段＝取り付く／下二＝取り付ける","x":"「思ひつく」","xj":"心が引かれる。","n":"自他の対応を確認する。","lv":3,"no":137},{"d":"word","q":"とぶらふ（訪ふ・弔ふ）","s":"動ハ四","a":"訪問する；見舞う；弔問する","x":"「病をとぶらふ」","xj":"病気を見舞う。","n":"「訪ねる」が第一義。","lv":1,"no":138},{"d":"word","q":"なやむ（悩む）","s":"動マ四","a":"病気で苦しむ・具合が悪い","x":"「なやみ給ふ」","xj":"ご病気でいらっしゃる。","n":"精神的な悩みより身体の不調。","lv":1,"no":139},{"d":"word","q":"ねぶ（老ぶ）","s":"動バ上二","a":"大人びる・年をとる","x":"「ねびまさる」","xj":"ますます大人びて美しくなる。","n":"「ねびゆく」も頻出。","lv":3,"no":140},{"d":"word","q":"ののしる（罵る）","s":"動ラ四","a":"大声で騒ぐ・評判になる","x":"「ののしりて行く」","xj":"大声で騒ぎながら行く。","n":"悪口の意は現代語。","lv":2,"no":141},{"d":"word","q":"はべり（侍り）","s":"動ラ変","a":"お仕えする；あります・ございます","x":"「都にはべり」","xj":"都におります。","n":"丁寧語としての用法が多い。","lv":1,"no":142},{"d":"word","q":"まうす（申す）","s":"動サ四","a":"申し上げる；して差し上げる","x":"「かく申す」","xj":"このように申し上げる。","n":"補助動詞「〜申す」も謙譲。","lv":1,"no":143},{"d":"word","q":"まかづ（罷づ）","s":"動ダ下二","a":"退出する・（貴所から）下がる","x":"「宮より罷づ」","xj":"御所から退出する。","n":"「まゐる」の対義。","lv":1,"no":144},{"d":"word","q":"まゐる（参る）","s":"動ラ四","a":"参上する；差し上げる；召し上がる","x":"「宮に参る」","xj":"御所に参上する。","n":"「食ふ・飲む」の尊敬にもなる多義語。","lv":1,"no":145},{"d":"word","q":"みる（見る）","s":"動マ上一","a":"結婚する・世話をする；見る","x":"「人を見る」","xj":"人と結婚する。","n":"「あふ」と同じく男女関係を指す。","lv":2,"no":146},{"d":"word","q":"めす（召す）","s":"動サ四","a":"お呼びになる；召し上がる；お召しになる","x":"「人を召す」","xj":"人をお呼びになる。","n":"「呼ぶ・食ふ・着る・乗る」の尊敬語。","lv":1,"no":147},{"d":"word","q":"やる（遣る）","s":"動ラ四","a":"行かせる・送る；気を晴らす","x":"「文をやる」","xj":"手紙を送る。","n":"「〜やる」で「遠くへ〜する」。","lv":2,"no":148},{"d":"word","q":"ゆく（行く）","s":"動カ四","a":"進んで行く；（時が）過ぎる","x":"「秋ゆく」","xj":"秋が過ぎて行く。","n":"時間の経過にも使う。「死ぬ」の婉曲に使う例もある。","lv":3,"no":149},{"d":"word","q":"わぶ（侘ぶ）","s":"動バ上二","a":"つらく思う・困る；わびしく思う","x":"「住みわぶ」","xj":"住むのがつらくなる。","n":"「〜わぶ」で「〜しかねる」。","lv":2,"no":150},{"d":"word","q":"あからさまなり","s":"形動ナリ","a":"ほんのちょっと・かりそめだ","x":"「あからさまに立ち出づ」","xj":"ほんのちょっと外に出る。","n":"現代語「あからさま（露骨）」とは別。","lv":2,"no":151},{"d":"word","q":"あきらむ（明らむ）","s":"動マ下二","a":"明らかにする・事情をはっきりさせる","x":"「心をあきらむ」","xj":"心を晴れやかにする／事情を明らかにする。","n":"「諦める（断念）」の意はない。","lv":2,"no":152},{"d":"word","q":"あく（飽く）","s":"動カ四","a":"満足する・十分だ","x":"「飽かず思ふ」","xj":"満足せず（名残惜しく）思う。","n":"「飽かず＝物足りない・いつまでも」。","lv":1,"no":153},{"d":"word","q":"あそばす（遊ばす）","s":"動サ四","a":"なさる（尊敬）；管弦・詩歌をなさる","x":"「琴あそばす」","xj":"琴をお弾きになる。","n":"「す」の尊敬語。","lv":2,"no":154},{"d":"word","q":"あなかしこ","s":"連語","a":"決して（〜するな）；ああ恐れ多い","x":"「あなかしこ、人に言ふな」","xj":"決して人に言うな。","n":"手紙の末尾の決まり文句にもなる。","lv":3,"no":155},{"d":"word","q":"いかばかり","s":"副","a":"どれほど・どんなにか","x":"「いかばかり嬉しからむ」","xj":"どんなにか嬉しいことだろう。","n":"感動・推量と呼応する。","lv":2,"no":156},{"d":"word","q":"あまた（数多）","s":"副","a":"たくさん・多く","x":"「人あまた集まる」","xj":"人が大勢集まる。","n":"「そこら・ここら」も「たくさん」。","lv":1,"no":157},{"d":"word","q":"あらそふ（争ふ）","s":"動ハ四","a":"争う・張り合う","x":"「先を争ふ」","xj":"先を争う。","n":"「あらがふ（否定する）」と区別。","lv":3,"no":158},{"d":"word","q":"いかで（如何で）","s":"副","a":"どうして；なんとかして","x":"「いかで見ばや」","xj":"なんとかして見たい。","n":"願望・意志と呼応すると「なんとかして」。","lv":1,"no":159},{"d":"word","q":"いかに（如何に）","s":"副","a":"どのように；どうして；どんなにか","x":"「いかにせむ」","xj":"どうしようか。","n":"感動を表す「いかに＝どんなにか」も。","lv":1,"no":160},{"d":"word","q":"いさ","s":"副","a":"さあ（どうだか）","x":"「いさ、知らず」","xj":"さあ、知りません。","n":"下に打消・不定を伴う。","lv":3,"no":161},{"d":"word","q":"いささか（些か）","s":"副","a":"少し；（打消と）少しも","x":"「いささかも動かず」","xj":"少しも動かない。","n":"打消と呼応で全部否定。","lv":2,"no":162},{"d":"word","q":"いたく（甚く）","s":"副","a":"たいそう；（打消と）たいして〜ない","x":"「いたく泣く」","xj":"ひどく泣く。","n":"「いたし」の連用形が副詞化。","lv":1,"no":163},{"d":"word","q":"いつとなく","s":"連語","a":"いつということもなく・いつも","x":"「いつとなく物思ふ」","xj":"いつも物思いにふける。","n":"","lv":3,"no":164},{"d":"word","q":"いと","s":"副","a":"たいそう・非常に；（打消と）たいして","x":"「いとをかし」","xj":"たいそう趣がある。","n":"強調は「いとど（ますます）」。","lv":1,"no":165},{"d":"word","q":"いとど","s":"副","a":"ますます・いっそう","x":"「いとど恋しき」","xj":"ますます恋しい。","n":"「いと」の強調形。","lv":1,"no":166},{"d":"word","q":"いな（否）","s":"感／名","a":"いいえ；いやだ","x":"「いな、さもあらず」","xj":"いいえ、そうではない。","n":"「いなぶ（辞退する）」も同系。","lv":3,"no":167},{"d":"word","q":"うたた（転た）","s":"副","a":"ますます・いよいよ；なんとも","x":"「うたた思ひまさる」","xj":"いっそう思いがつのる。","n":"「うたてし（いやだ）」と同源。","lv":3,"no":168},{"d":"word","q":"え","s":"副","a":"（打消と）〜できない","x":"「え言はず」","xj":"言うことができない。","n":"下に必ず打消・反語が来る。呼応の副詞の代表。","lv":1,"no":169},{"d":"word","q":"おのづから（自ら）","s":"副","a":"自然と；たまたま；万一","x":"「おのづから知る」","xj":"自然と知る。","n":"「万一」の意も入試頻出。","lv":1,"no":170},{"d":"word","q":"かく（斯く）","s":"副","a":"このように","x":"「かく言ふ」","xj":"このように言う。","n":"「さ（そのように）」と対。","lv":1,"no":171},{"d":"word","q":"かたみに（互に）","s":"副","a":"互いに","x":"「かたみに語らふ」","xj":"互いに語り合う。","n":"名詞「かたみ（形見）」と別。","lv":3,"no":172},{"d":"word","q":"かねて（予て）","s":"副","a":"前もって・以前から","x":"「かねて思ひしより」","xj":"前もって思っていたよりも。","n":"","lv":3,"no":173},{"d":"word","q":"けだし（蓋し）","s":"副","a":"もしかすると・おそらく","x":"「けだし然らむ」","xj":"おそらくそうであろう。","n":"漢文訓読調。","lv":3,"no":174},{"d":"word","q":"さらに（更に）","s":"副","a":"（打消と）まったく〜ない；そのうえ","x":"「さらに知らず」","xj":"まったく知らない。","n":"打消呼応の代表格。","lv":1,"no":175},{"d":"word","q":"すべて（全て）","s":"副","a":"（打消と）まったく〜ない；総じて","x":"「すべて知らず」","xj":"まったく知らない。","n":"打消と呼応。","lv":2,"no":176},{"d":"word","q":"つゆ（露）","s":"副","a":"（打消と）少しも〜ない","x":"「つゆ知らず」","xj":"少しも知らない。","n":"名詞「露」からの比喩。","lv":1,"no":177},{"d":"word","q":"つひに（遂に）","s":"副","a":"とうとう・結局","x":"「つひに死ぬ」","xj":"とうとう死ぬ。","n":"","lv":2,"no":178},{"d":"word","q":"などて","s":"副","a":"どうして（〜か、いや〜ない）","x":"「などて君来まさぬ」","xj":"どうしてあなたは来ないのか。","n":"「などか」も同義。反語で使われることが多い。","lv":1,"no":179},{"d":"word","q":"なほ（猶）","s":"副","a":"やはり；さらに","x":"「なほ悲し」","xj":"やはり悲しい。","n":"","lv":1,"no":180},{"d":"word","q":"なんぞ（何ぞ）","s":"副","a":"どうして","x":"「なんぞ然らむ」","xj":"どうしてそうであろうか。","n":"漢文訓読調の反語。","lv":3,"no":181},{"d":"word","q":"はた（将）","s":"副","a":"また・やはり；もしかすると","x":"「はた知らず」","xj":"やはり知らない。","n":"","lv":3,"no":182},{"d":"word","q":"まさに（当に）","s":"副","a":"きっと〜だろう・当然〜すべきだ","x":"「まさに来たるべし」","xj":"きっと来るだろう。","n":"漢文の再読文字「当」の訓。「正に（ちょうど）」とは別。","lv":3,"no":183},{"d":"word","q":"みな（皆）","s":"副","a":"すべて","x":"「みな去りぬ」","xj":"みな去ってしまった。","n":"","lv":3,"no":184},{"d":"word","q":"むげなり（無下なり）","s":"形動ナリ","a":"ひどい・まったくお話にならない","x":"「むげに知らず」","xj":"まったく知らない。","n":"「むげに＝いちずに・まったく」。","lv":2,"no":185},{"d":"word","q":"もし（若し）","s":"副","a":"万一・もしも","x":"「もし来ずは」","xj":"もし来ないならば。","n":"仮定条件と呼応。","lv":3,"no":186},{"d":"word","q":"やうやく（漸く）","s":"副","a":"しだいに","x":"「やうやく暮る」","xj":"しだいに日が暮れる。","n":"「やうやう」と同じ。","lv":2,"no":187},{"d":"word","q":"よし（縦し）","s":"副","a":"たとえ〜ても","x":"「よし、さもあらばあれ」","xj":"たとえそうであってもかまわない。","n":"「よしや」とも。","lv":3,"no":188},{"d":"word","q":"をさをさ","s":"副","a":"（打消と）ほとんど〜ない","x":"「をさをさ知らず」","xj":"ほとんど知らない。","n":"打消呼応。","lv":2,"no":189},{"d":"word","q":"あからめ","s":"名","a":"よそ見・浮気","x":"「あからめもせず」","xj":"よそ見もしない。","n":"「あからさま」と同系。","lv":3,"no":190},{"d":"word","q":"あるじ（饗）","s":"名","a":"もてなし・ごちそう","x":"「あるじまうけす」","xj":"ごちそうの用意をする。","n":"「主（あるじ）」と同音。","lv":3,"no":191},{"d":"word","q":"みや（宮）","s":"名","a":"御所；皇族（親王・内親王・中宮）","x":"「宮に参る」","xj":"御所に参上する（中宮のもとに参上する）。","n":"建物を指すか人を指すか、文脈で決める。","lv":2,"no":192},{"d":"word","q":"うへ（上）","s":"名","a":"天皇；奥方；身の上","x":"「うへの御前」","xj":"天皇の御前。","n":"文脈で誰を指すか判断する。","lv":2,"no":193},{"d":"word","q":"うつつ（現）","s":"名","a":"現実；正気","x":"「夢かうつつか」","xj":"夢か現実か。","n":"「夢」と対で使われる。","lv":2,"no":194},{"d":"word","q":"おほやけ（公）","s":"名","a":"朝廷・天皇；公的なこと","x":"「おほやけに仕ふ」","xj":"朝廷にお仕えする。","n":"対は「わたくし（私的）」。","lv":1,"no":195},{"d":"word","q":"かぎり（限り）","s":"名","a":"限度；最期；全部","x":"「今日を限りとす」","xj":"今日を最期とする。","n":"「限りなし＝この上ない」。","lv":2,"no":196},{"d":"word","q":"かたち（形・容貌）","s":"名","a":"顔だち・容貌","x":"「かたち清らなり」","xj":"容貌が美しい。","n":"「すがた（姿）」と区別。","lv":1,"no":197},{"d":"word","q":"きは（際）","s":"名","a":"身分・家柄；境目","x":"「きは高き人」","xj":"身分の高い人。","n":"「きはめて」の語源。","lv":2,"no":198},{"d":"word","q":"け（気）","s":"名","a":"様子・気配","x":"「人のけはひす」","xj":"人の気配がする。","n":"「けしき（様子）」と同系。","lv":3,"no":199},{"d":"word","q":"けしき（気色）","s":"名","a":"様子・そぶり；機嫌","x":"「けしきを見る」","xj":"様子をうかがう。","n":"「景色」の意は後世。","lv":1,"no":200},{"d":"word","q":"ここち（心地）","s":"名","a":"気分・気持ち；病気","x":"「心地あし」","xj":"気分が悪い。","n":"「心地例ならず＝病気だ」。","lv":2,"no":201},{"d":"word","q":"ことわり（理）","s":"名","a":"道理・筋道；もっともなこと","x":"「ことわりなり」","xj":"もっともである。","n":"動詞は「ことわる」。","lv":1,"no":202},{"d":"word","q":"さいはひ（幸ひ）","s":"名","a":"幸運・（特に）出世や良縁","x":"「さいはひ人」","xj":"幸運に恵まれた人。","n":"宮廷社会では后になることなど。","lv":2,"no":203},{"d":"word","q":"さが（性）","s":"名","a":"生まれつきの性質；ならわし","x":"「世のさが」","xj":"世の常。","n":"「さがなし」の語根。","lv":3,"no":204},{"d":"word","q":"しるし（験・徴）","s":"名","a":"効果・ご利益；前兆","x":"「祈りのしるし」","xj":"祈りの効き目。","n":"形容詞「しるし＝はっきりしている」も別にある。","lv":2,"no":205},{"d":"word","q":"すき（好き）","s":"名","a":"風流・恋愛に熱心なこと","x":"「すき者」","xj":"風流人／色好み。","n":"「数寄」とも書く。","lv":2,"no":206},{"d":"word","q":"せうそこ（消息）","s":"名","a":"手紙；訪問・案内","x":"「せうそこす」","xj":"手紙を出す／訪問を知らせる。","n":"「せうそく」とも。安否や用件を伝えること全般。","lv":2,"no":207},{"d":"word","q":"そらごと（空言・虚言）","s":"名","a":"うそ","x":"「そらごとをいふ」","xj":"うそをつく。","n":"対は「まこと」。","lv":3,"no":208},{"d":"word","q":"たより（頼り・便り）","s":"名","a":"よりどころ；機会・つて","x":"「たよりを求む」","xj":"つてを求める。","n":"「手紙」の意は後世寄り。","lv":2,"no":209},{"d":"word","q":"つとめ（勤め）","s":"名","a":"仏道修行・勤行","x":"「朝のつとめ」","xj":"朝の勤行。","n":"「つとめて（早朝）」と混同しない。","lv":3,"no":210},{"d":"word","q":"ついで（序）","s":"名","a":"順序；機会・折","x":"「ついであしからず」","xj":"折が悪くない（ちょうどよい）。","n":"「ついでに」の語源。","lv":2,"no":211},{"d":"word","q":"なさけ（情け）","s":"名","a":"思いやり；風流を解する心","x":"「なさけある人」","xj":"思いやりのある人／風流を解する人。","n":"「なさけなし」の対。","lv":1,"no":212},{"d":"word","q":"ならひ（習ひ）","s":"名","a":"慣例・世の常","x":"「世のならひ」","xj":"世の常。","n":"「〜のならひ」で常套句。","lv":2,"no":213},{"d":"word","q":"にほひ（匂ひ）","s":"名","a":"美しい色つや；香り","x":"「花のにほひ」","xj":"花の美しい色つや。","n":"視覚の美が第一義。","lv":1,"no":214},{"d":"word","q":"さき（先）","s":"名","a":"以前・過去；将来","x":"「さきの世」","xj":"前世。","n":"古文の「さき」は「以前」を指すことが多い。","lv":3,"no":215},{"d":"word","q":"ほい（本意）","s":"名","a":"かねてからの願い・本来の意向","x":"「本意なし」","xj":"不本意だ。","n":"「ほんい」の撥音「ん」を書かない表記。","lv":2,"no":216},{"d":"word","q":"みゆき（御幸・行幸）","s":"名","a":"天皇や上皇のお出かけ","x":"「みゆきあり」","xj":"行幸がある。","n":"天皇＝行幸、上皇・法皇＝御幸。","lv":3,"no":217},{"d":"word","q":"ゆゑ（故）","s":"名","a":"理由；由緒・風情","x":"「ゆゑある人」","xj":"由緒（教養）のある人。","n":"「ゆゑなし＝つまらない」。","lv":2,"no":218},{"d":"word","q":"よ（世・代）","s":"名","a":"世の中；治世；男女の仲；一生","x":"「世を捨つ」","xj":"出家する。","n":"「世を捨つ・世を背く＝出家」。","lv":1,"no":219},{"d":"word","q":"ゐなか（田舎）","s":"名","a":"都から離れた土地","x":"「ゐなかびたり」","xj":"田舎めいている。","n":"貴族から見た見下しを含む。","lv":3,"no":220},{"d":"word","q":"をとこ（男）","s":"名","a":"男；恋人・夫","x":"「女、をとこを待つ」","xj":"女が夫（恋人）を待つ。","n":"「男・女」は恋愛関係の相手を指すことが多い。","lv":3,"no":221},{"d":"word","q":"あかつき（暁）","s":"名","a":"夜明け前のまだ暗い頃","x":"「暁に帰る」","xj":"夜明け前に帰る。","n":"夜明けの順は「あかつき→しののめ→あけぼの→あさぼらけ」。","lv":1,"no":222},{"d":"word","q":"あけぼの（曙）","s":"名","a":"夜がほのぼのと明ける頃","x":"「春はあけぼの」","xj":"春は明け方（がよい）。","n":"「暁」より少し明るい。","lv":1,"no":223},{"d":"word","q":"ありあけ（有明）","s":"名","a":"夜が明けても空に残る月","x":"「有明の月」","xj":"明け方の月。","n":"後朝（きぬぎぬ）の別れと結びつく。","lv":2,"no":224},{"d":"word","q":"きぬぎぬ（後朝）","s":"名","a":"共寝した男女が別れる翌朝","x":"「きぬぎぬの別れ」","xj":"翌朝の別れ。","n":"「衣衣」＝それぞれの衣を着る朝。","lv":2,"no":225},{"d":"word","q":"すさぶ（荒ぶ・遊ぶ）","s":"動バ四／上二","a":"気の向くままにする；勢いが増す","x":"「筆すさぶ」","xj":"気の向くままに筆をとる。","n":"「すさまじ」と同根。","lv":3,"no":226},{"d":"word","q":"たまさかなり（偶なり）","s":"形動ナリ","a":"たまたま・まれだ","x":"「たまさかに逢ふ」","xj":"たまたま逢う。","n":"","lv":3,"no":227},{"d":"word","q":"つきなし（付き無し）","s":"形ク","a":"似つかわしくない・不都合だ","x":"「つきなき事」","xj":"似つかわしくないこと。","n":"「つきづきし」の対。","lv":2,"no":228},{"d":"word","q":"なのめなり（斜めなり）","s":"形動ナリ","a":"ふつうだ・いいかげんだ；（打消と）並々でない","x":"「なのめならず」","xj":"並々でない。","n":"肯定と打消で意味が反転する。","lv":2,"no":229},{"d":"word","q":"はかばかし","s":"形シク","a":"しっかりしている・てきぱきしている","x":"「はかばかしき人もなし」","xj":"しっかりした人もいない。","n":"「はかなし」の対。打消で使うことが多い。","lv":2,"no":230},{"d":"word","q":"ひがひがし（僻僻し）","s":"形シク","a":"ひねくれている・風流を解さない","x":"「ひがひがしき者」","xj":"ひねくれた者。","n":"「ひが事＝間違い」。","lv":3,"no":231},{"d":"word","q":"ふるまふ（振る舞ふ）","s":"動ハ四","a":"ふるまう；ごちそうする","x":"「所せくふるまふ」","xj":"大げさにふるまう。","n":"","lv":3,"no":232},{"d":"word","q":"ほど（程）","s":"名","a":"時間・距離・身分・程度","x":"「ほど経て」","xj":"時が経って。","n":"文脈で何の「程」かを見極める最重要語。","lv":1,"no":233},{"d":"word","q":"まうく（設く・儲く）","s":"動カ下二","a":"準備する・用意する","x":"「あるじまうけす」","xj":"ごちそうの用意をする。","n":"「まうけ＝準備」。","lv":3,"no":234},{"d":"word","q":"まぎる（紛る）","s":"動ラ下二","a":"入りまじって見分けがつかない；気がまぎれる","x":"「人にまぎる」","xj":"人ごみにまぎれる。","n":"","lv":3,"no":235},{"d":"word","q":"まねぶ（学ぶ）","s":"動バ四","a":"まねる；そのまま伝える；学ぶ","x":"「言葉をまねぶ」","xj":"言葉をそのまま伝える。","n":"「まねる」が原義。","lv":2,"no":236},{"d":"word","q":"みそかなり（密かなり）","s":"形動ナリ","a":"こっそりしている","x":"「みそかに通ふ」","xj":"こっそり通う。","n":"「みそかごと＝密通」。","lv":3,"no":237},{"d":"word","q":"むつぶ（睦ぶ）","s":"動バ上二","a":"親しくする","x":"「人とむつぶ」","xj":"人と親しくする。","n":"「むつまじ」も同系。","lv":3,"no":238},{"d":"word","q":"めやすし（目安し）","s":"形ク","a":"見苦しくない・感じがよい","x":"「めやすき人」","xj":"感じのよい人。","n":"「見＋安し」。","lv":2,"no":239},{"d":"word","q":"ものす（物す）","s":"動サ変","a":"ある・いる・行く・言う（婉曲）","x":"「かくものし給ふ」","xj":"このようにしていらっしゃる。","n":"具体的な動詞をぼかす万能動詞。","lv":2,"no":240},{"d":"word","q":"ゆめゆめ","s":"副","a":"決して（〜な）","x":"「ゆめゆめ疑ふな」","xj":"決して疑うな。","n":"禁止と呼応。","lv":2,"no":241},{"d":"word","q":"らうたし","s":"形ク","a":"かわいらしい・いとおしい","x":"「らうたき児（ちご）なり」","xj":"かわいらしい幼児である。","n":"「うつくし」に近い。守ってやりたい愛情。","lv":1,"no":242},{"d":"word","q":"らうらうじ（労々じ）","s":"形シク","a":"洗練されている・才気がある","x":"「らうらうじき人」","xj":"洗練された人。","n":"「労（経験）」を積んだ感じ。","lv":3,"no":243},{"d":"word","q":"わざと","s":"副","a":"わざわざ・特に；本格的に","x":"「わざと使ひを立つ」","xj":"わざわざ使者を立てる。","n":"「故意に」の意は薄い。","lv":2,"no":244},{"d":"word","q":"ゆかしがる","s":"動ラ四","a":"見たがる・知りたがる","x":"「いとゆかしがり給ふ」","xj":"たいそう知りたがりなさる。","n":"形容詞「ゆかし」の動詞形。","lv":3,"no":245},{"d":"word","q":"ゐなかぶ（田舎ぶ）","s":"動バ上二","a":"田舎じみる","x":"「ゐなかびたり」","xj":"田舎じみている。","n":"終止形は「ゐなかぶ」。連用形「ゐなかび」で出ることが多い。","lv":3,"no":246},{"d":"word","q":"ゑむ（笑む）","s":"動マ四","a":"ほほえむ","x":"「うちゑむ」","xj":"ほほえむ。","n":"「わらふ」より静か。","lv":3,"no":247},{"d":"word","q":"をこ（痴・烏滸）","s":"名","a":"愚かなこと・ばかげたこと","x":"「をこの沙汰」","xj":"ばかげた事柄。","n":"「をこがまし」の語根。","lv":3,"no":248},{"d":"word","q":"をり（折）","s":"名","a":"時・場合；季節","x":"「をりからの雨」","xj":"折からの雨。","n":"「をりふし」も頻出。","lv":2,"no":249},{"d":"word","q":"いはけなし（稚けなし）","s":"形ク","a":"幼い・あどけない","x":"「いはけなき御ありさま」","xj":"幼くいたいけなご様子。","n":"「いとけなし」と同義。","lv":3,"no":250},{"d":"word","q":"うちつけなり","s":"形動ナリ","a":"突然だ・出し抜けだ；軽率だ","x":"「うちつけに言ひ出づ」","xj":"突然に言い出す。","n":"「うちつけ心＝軽はずみな心」。","lv":3,"no":251},{"d":"word","q":"うるさがる","s":"動ラ四","a":"わずらわしがる","x":"「人をうるさがる」","xj":"人をわずらわしがる。","n":"","lv":3,"no":252},{"d":"word","q":"おくる（後る・遅る）","s":"動ラ下二","a":"先立たれる・死に後れる","x":"「親におくる」","xj":"親に先立たれる。","n":"死別を表す重要語。","lv":2,"no":253},{"d":"word","q":"おほとのごもる（大殿籠る）","s":"動ラ四","a":"お休みになる","x":"「大殿籠りぬ」","xj":"お休みになった。","n":"「寝（ぬ）」の最高敬語。","lv":2,"no":254},{"d":"word","q":"かこつ（託つ）","s":"動タ四","a":"嘆く・不平を言う；かこつける","x":"「身をかこつ」","xj":"わが身を嘆く。","n":"","lv":3,"no":255},{"d":"word","q":"かたじけなし（忝し）","s":"形ク","a":"恐れ多い；ありがたい","x":"「かたじけなき仰せ」","xj":"恐れ多いお言葉。","n":"身分差からくる恐縮。","lv":2,"no":256},{"d":"word","q":"きはやかなり（際やかなり）","s":"形動ナリ","a":"きわだっている・はっきりしている","x":"「きはやかに見ゆ」","xj":"きわだって見える。","n":"「きは（際）＝境目・身分」から。","lv":3,"no":257},{"d":"word","q":"くまなし（隈無し）","s":"形ク","a":"かげりがない；何もかも知り尽くしている","x":"「くまなき月」","xj":"かげりのない月。","n":"「隈＝物陰」。","lv":2,"no":258},{"d":"word","q":"けさうす（懸想す）","s":"動サ変","a":"恋い慕う・求愛する","x":"「けさうし給ふ」","xj":"恋い慕いなさる。","n":"「けさう文＝恋文」。","lv":2,"no":259},{"d":"word","q":"こころばへ（心ばへ）","s":"名","a":"心づかい・性質；趣","x":"「心ばへよき人」","xj":"心づかいのよい人。","n":"「心ばせ（気立て・才覚）」も類義。","lv":2,"no":260},{"d":"word","q":"ここら","s":"副","a":"たくさん；たいそう","x":"「ここらの年ごろ」","xj":"長年の間。","n":"「そこら」も同義。数量にも程度にも使う。","lv":3,"no":261},{"d":"word","q":"こまやかなり（細やかなり）","s":"形動ナリ","a":"心がこもっている；色が濃い","x":"「こまやかなる文」","xj":"心のこもった手紙。","n":"","lv":3,"no":262},{"d":"word","q":"さうなし（双無し）","s":"形ク","a":"並ぶものがない・この上ない","x":"「さうなき舞の手」","xj":"この上ない舞の技。","n":"「左右無し（ためらわない）」と同音別語。","lv":3,"no":263},{"d":"word","q":"さながら","s":"副","a":"そのまま；すべて","x":"「さながら残れり」","xj":"そのまま残っている。","n":"「まるで」の意は後世。","lv":2,"no":264},{"d":"word","q":"しどけなし","s":"形ク","a":"しまりがない・くつろいでいる","x":"「しどけなき姿」","xj":"うちとけたくつろいだ姿。","n":"悪い意味とは限らない。","lv":3,"no":265},{"d":"word","q":"すごし（凄し）","s":"形ク","a":"ぞっとするほど寂しい・もの寂しい","x":"「すごき夜」","xj":"ぞっとするほど寂しい夜。","n":"「すさまじ」と同根。","lv":2,"no":266},{"d":"word","q":"たけし（猛し）","s":"形ク","a":"勇猛だ・激しい","x":"「たけき心」","xj":"勇猛な心。","n":"","lv":3,"no":267},{"d":"word","q":"ためらふ","s":"動ハ四","a":"気持ちを静める；病がやわらぐ","x":"「心をためらふ」","xj":"気持ちを落ち着ける。","n":"「躊躇」の意は後世。","lv":3,"no":268},{"d":"word","q":"つきしろふ（突きしろふ）","s":"動ハ四","a":"つつき合って合図する","x":"「人々つきしろふ」","xj":"人々がつつき合って合図する。","n":"「しろふ」は「互いに〜し合う」。","lv":3,"no":269},{"d":"word","q":"こころざし（志）","s":"名","a":"愛情・誠意；謝礼","x":"「心ざし深し」","xj":"愛情が深い。","n":"「志」＝相手に向ける心。","lv":2,"no":270},{"d":"word","q":"なめし（無礼し）","s":"形ク","a":"無礼だ・失礼だ","x":"「なめき言葉」","xj":"無礼な言葉。","n":"「なめげなり」も同義。","lv":3,"no":271},{"d":"word","q":"なやましげなり","s":"形動ナリ","a":"苦しそうだ・病気らしい","x":"「なやましげなる御気色」","xj":"ご病気らしいご様子。","n":"「なやむ」の派生。","lv":3,"no":272},{"d":"word","q":"にげなし（似気無し）","s":"形ク","a":"似合わない・不釣り合いだ","x":"「にげなき縁」","xj":"不釣り合いな縁組。","n":"「つきなし」と類義。","lv":2,"no":273},{"d":"word","q":"ねんず（念ず）","s":"動サ変","a":"じっとこらえる；心の中で祈る","x":"「涙をねんず」","xj":"涙をこらえる。","n":"「我慢する」が第一義。","lv":1,"no":274},{"d":"word","q":"のたまふ（宣ふ）","s":"動ハ四","a":"おっしゃる","x":"「かくのたまふ」","xj":"このようにおっしゃる。","n":"「言ふ」の尊敬語。最高敬語は「のたまはす」。","lv":1,"no":275},{"d":"word","q":"はかりごと（謀）","s":"名","a":"計画・策略","x":"「はかりごとをめぐらす」","xj":"策略をめぐらす。","n":"","lv":3,"no":276},{"d":"word","q":"ふるさと（故郷・古里）","s":"名","a":"昔なじみの土地・旧都；生まれ故郷","x":"「ふるさとの奈良の都」","xj":"旧都の奈良。","n":"「以前住んでいた所」が中心。","lv":2,"no":277},{"d":"word","q":"まうづ（詣づ）","s":"動ダ下二","a":"参上する；お参りする","x":"「社にまうづ」","xj":"神社にお参りする。","n":"「まゐる」の謙譲語系。","lv":2,"no":278},{"d":"word","q":"みそかごと（密か事）","s":"名","a":"秘めごと・密通","x":"「みそかごと露見す」","xj":"密通が露見する。","n":"","lv":3,"no":279},{"d":"word","q":"むべ（宜）","s":"副","a":"なるほど・もっともなことに","x":"「むべ山風を嵐といふらむ」","xj":"なるほど山風を嵐と言うのだろう。","n":"「うべ」とも書く。","lv":3,"no":280},{"d":"word","q":"めづ（愛づ）","s":"動ダ下二","a":"愛する・賞賛する","x":"「虫をめづる姫君」","xj":"虫を愛する姫君。","n":"「めづらし・めでたし」の語根。","lv":1,"no":281},{"d":"word","q":"ものし（物し）","s":"形シク","a":"不快だ・目ざわりだ","x":"「ものしき事」","xj":"不快なこと。","n":"動詞「ものす」と別。","lv":3,"no":282},{"d":"word","q":"やつす（窶す）","s":"動サ四","a":"目立たない姿にする・出家する","x":"「身をやつす」","xj":"質素な身なりに変える。","n":"受身的には「やつる」。","lv":2,"no":283},{"d":"word","q":"ゆくりなし","s":"形ク","a":"突然だ・思いがけない","x":"「ゆくりなく訪れ来」","xj":"思いがけず訪ねて来る。","n":"「うちつけなり」と類義。","lv":3,"no":284},{"d":"word","q":"よそふ（寄そふ・比ふ）","s":"動ハ下二","a":"なぞらえる・関係づける","x":"「花によそふ」","xj":"花になぞらえる。","n":"「よそへて言ふ」。","lv":3,"no":285},{"d":"word","q":"らうがはし（乱がはし）","s":"形シク","a":"騒がしい・雑然としている","x":"「らうがはしき所」","xj":"騒がしい場所。","n":"","lv":3,"no":286},{"d":"word","q":"わたくし（私）","s":"名","a":"個人的なこと","x":"「わたくしの事」","xj":"私的な事柄。","n":"「おほやけ」の対。","lv":3,"no":287},{"d":"word","q":"ゐやなし（礼無し）","s":"形ク","a":"礼儀がない・無礼だ","x":"「ゐやなき振る舞ひ」","xj":"無礼なふるまい。","n":"「ゐや＝礼儀」。","lv":3,"no":288},{"d":"word","q":"おこたり（怠り）","s":"名","a":"なまけること；病気の回復；謝罪","x":"「おこたりを申す」","xj":"お詫びを申し上げる。","n":"動詞「おこたる＝病が良くなる」も重要。","lv":2,"no":289},{"d":"word","q":"おこたる（怠る）","s":"動ラ四","a":"なまける；病気がよくなる","x":"「病おこたる」","xj":"病気が快方に向かう。","n":"入試で問われるのは「快方」の意。","lv":1,"no":290},{"d":"word","q":"ものぐるほし（物狂ほし）","s":"形シク","a":"正気を失っている・異常だ","x":"「ものぐるほしき心地す」","xj":"狂ったような気持ちがする。","n":"『徒然草』序段「あやしうこそものぐるほしけれ」で有名。","lv":2,"no":291},{"d":"word","q":"ゆめ（努）","s":"副","a":"決して（〜な）","x":"「ゆめ忘るな」","xj":"決して忘れるな。","n":"「ゆめゆめ」の単独形。","lv":2,"no":292},{"d":"word","q":"たへがたし（堪へ難し）","s":"形ク","a":"我慢できない","x":"「たへがたく思ふ」","xj":"我慢できなく思う。","n":"","lv":3,"no":293},{"d":"word","q":"いとほしがる","s":"動ラ四","a":"気の毒がる・かわいがる","x":"「いとほしがり給ふ」","xj":"気の毒がりなさる。","n":"","lv":3,"no":294},{"d":"word","q":"いそぐ（急ぐ）","s":"動ガ四","a":"準備する；急ぐ","x":"「行幸をいそぐ」","xj":"行幸の準備をする。","n":"「準備する」の意が古文では多い。","lv":2,"no":295},{"d":"word","q":"かへりみる（顧みる）","s":"動マ上一","a":"振り返る；気にかける","x":"「後をかへりみる」","xj":"後ろを振り返る。","n":"","lv":3,"no":296},{"d":"word","q":"すぐす（過ぐす）","s":"動サ四","a":"時を過ごす；度を越す","x":"「日をすぐす」","xj":"日を過ごす。","n":"","lv":3,"no":297},{"d":"word","q":"たてまつる（奉る）","s":"動ラ四","a":"差し上げる；召し上がる・お召しになる","x":"「文をたてまつる」","xj":"お手紙を差し上げる。","n":"謙譲が基本だが尊敬用法もある。","lv":1,"no":298},{"d":"word","q":"こころおとり（心劣り）","s":"名","a":"期待はずれでがっかりすること","x":"「心おとりす」","xj":"会ってみて期待はずれに感じる。","n":"対は「心まさり」。","lv":3,"no":299},{"d":"word","q":"なごり（名残）","s":"名","a":"余情・面影；残り","x":"「なごり惜し」","xj":"別れがたい。","n":"「余波」とも書く。","lv":3,"no":300},{"d":"word","q":"つらし（辛し）","s":"形ク","a":"（相手が）薄情だ・冷たい；つらい","x":"「つらき人を思ふ」","xj":"薄情な人を思う。","n":"自分の内から湧く「うし（憂し）」と対。原因が相手にある。","lv":1,"no":301},{"d":"aux","q":"る","a":"受身・尊敬・自発・可能","s":"四段・ナ変・ラ変の未然形","k":"れ／れ／る／るる／るれ／れよ","t":"下二段型","x":"「人に笑はる」","xj":"人に笑われる。","n":"可能は打消と一緒に使うのが原則。自発は「思ふ・見る・泣く」など心情語につく。","lv":1,"no":302},{"d":"aux","q":"らる","a":"受身・尊敬・自発・可能","s":"上記以外（四段・ナ変・ラ変以外）の未然形","k":"られ／られ／らる／らるる／らるれ／られよ","t":"下二段型","x":"「案ぜらる」","xj":"自然と心配される。","n":"「る」と接続だけが違う。意味の見分け方は同じ。","lv":1,"no":303},{"d":"aux","q":"す","a":"使役・尊敬","s":"四段・ナ変・ラ変の未然形","k":"せ／せ／す／する／すれ／せよ","t":"下二段型","x":"「人に読ます」","xj":"人に読ませる。","n":"使役の対象「〜に」があれば使役。無くて下に尊敬語が続けば尊敬（二重尊敬）。","lv":1,"no":304},{"d":"aux","q":"さす","a":"使役・尊敬","s":"上記以外の未然形","k":"させ／させ／さす／さする／さすれ／させよ","t":"下二段型","x":"「見させ給ふ」","xj":"ご覧になる。","n":"「す」と接続だけが違う。","lv":1,"no":305},{"d":"aux","q":"しむ","a":"使役・尊敬","s":"未然形","k":"しめ／しめ／しむ／しむる／しむれ／しめよ","t":"下二段型","x":"「読ましむ」","xj":"読ませる。","n":"漢文訓読調でよく使う。","lv":2,"no":306},{"d":"aux","q":"ず","a":"打消","s":"未然形","k":"ず・ざら／ず・ざり／ず／ぬ・ざる／ね・ざれ／ざれ","t":"特殊型","x":"「知らず」","xj":"知らない。","n":"「ぬ／ね」は打消の連体形・已然形。完了の「ぬ」との識別が最頻出。","lv":1,"no":307},{"d":"aux","q":"む（ん）","a":"推量・意志・勧誘・仮定・婉曲","s":"未然形","k":"○／○／む／む／め／○","t":"四段型","x":"「花咲かむ」","xj":"花が咲くだろう。","n":"主語が一人称→意志、二人称→勧誘、三人称→推量。文中の連体形は仮定・婉曲。","lv":1,"no":308},{"d":"aux","q":"むず（んず）","a":"推量・意志・勧誘","s":"未然形","k":"○／○／むず／むずる／むずれ／○","t":"サ変型","x":"「行かむず」","xj":"行くつもりだ。","n":"「む」とほぼ同じ意味。「むとす」の縮約。","lv":2,"no":309},{"d":"aux","q":"じ","a":"打消推量・打消意志","s":"未然形","k":"○／○／じ／じ／じ／○","t":"無変化型","x":"「え行かじ」","xj":"行けないだろう。","n":"「む」の否定。一人称なら打消意志。","lv":1,"no":310},{"d":"aux","q":"まし","a":"反実仮想・ためらいの意志","s":"未然形","k":"ませ・ましか／○／まし／まし／ましか／○","t":"特殊型","x":"「世の中にたえて桜のなかりせば春の心はのどけからまし」","xj":"もし世の中に全く桜がなかったなら、春を過ごす心はのどかであっただろうに。","n":"「〜せば／〜ませば／〜ましかば　〜まし」で「もし〜だったら〜だろうに」。","lv":1,"no":311},{"d":"aux","q":"まほし","a":"希望（自分の願望）","s":"未然形","k":"まほしから／まほしく・まほしかり／まほし／まほしき・まほしかる／まほしけれ／○","t":"形容詞シク型","x":"「行かまほし」","xj":"行きたい。","n":"「たし」より古い。「あらまほし＝理想的だ」。","lv":2,"no":312},{"d":"aux","q":"き","a":"過去（直接体験）","s":"連用形","k":"（せ）／○／き／し／しか／○","t":"特殊型","x":"「昔、男ありき」","xj":"昔、男がいた。","n":"自分が体験した過去。カ変・サ変には特殊な接続をする。","lv":1,"no":313},{"d":"aux","q":"けり","a":"過去（伝聞・伝承）・詠嘆（気づき）","s":"連用形","k":"けら／○／けり／ける／けれ／○","t":"ラ変型","x":"「今は昔、竹取の翁ありけり」","xj":"今は昔、竹取の翁がいた。","n":"地の文では伝承の過去（〜た）。和歌・会話文では詠嘆（〜だなあ）。","lv":1,"no":314},{"d":"aux","q":"つ","a":"完了・強意","s":"連用形","k":"て／て／つ／つる／つれ／てよ","t":"下二段型","x":"「花散りつ」","xj":"花が散ってしまった。","n":"「てむ・てき・てけり」は強意。意識的な動作につく傾向。","lv":1,"no":315},{"d":"aux","q":"ぬ","a":"完了・強意","s":"連用形","k":"な／に／ぬ／ぬる／ぬれ／ね","t":"ナ変型","x":"「日暮れぬ」","xj":"日が暮れてしまった。","n":"「なむ・にき・にけり」は強意。自然な変化につく傾向。","lv":1,"no":316},{"d":"aux","q":"たり","a":"完了・存続","s":"連用形","k":"たら／たり／たり／たる／たれ／たれ","t":"ラ変型","x":"「門に立ちたり」","xj":"門に立っている。","n":"「〜ている・〜てある」なら存続。断定の「たり」（体言接続）と区別。","lv":1,"no":317},{"d":"aux","q":"り","a":"完了・存続","s":"サ変の未然形・四段の已然形","k":"ら／り／り／る／れ／れ","t":"ラ変型","x":"「咲けり」","xj":"咲いている。","n":"「サ未四已（さみしい）」で接続を覚える。","lv":1,"no":318},{"d":"aux","q":"べし","a":"推量・意志・可能・当然・命令・適当","s":"終止形（ラ変型は連体形）","k":"べから／べく・べかり／べし／べき・べかる／べけれ／○","t":"形容詞ク型","x":"「行くべし」","xj":"行くはずだ／行くのがよい。","n":"「スイカとめて」＝推量・意志・可能・当然・命令・適当。","lv":1,"no":319},{"d":"aux","q":"まじ","a":"打消推量・打消意志・不可能・打消当然・禁止","s":"終止形（ラ変型は連体形）","k":"まじから／まじく・まじかり／まじ／まじき・まじかる／まじけれ／○","t":"形容詞シク型","x":"「行くまじ」","xj":"行かないだろう／行ってはならない。","n":"「べし」の否定。","lv":1,"no":320},{"d":"aux","q":"らむ（らん）","a":"現在推量・現在の原因推量・伝聞","s":"終止形（ラ変型は連体形）","k":"○／○／らむ／らむ／らめ／○","t":"四段型","x":"「など泣くらむ」","xj":"どうして泣いているのだろう。","n":"今、目の前にない事柄への推量。","lv":1,"no":321},{"d":"aux","q":"けむ（けん）","a":"過去推量・過去の原因推量・過去の伝聞","s":"連用形","k":"○／○／けむ／けむ／けめ／○","t":"四段型","x":"「いかに思ひけむ」","xj":"どのように思っただろうか。","n":"「らむ」の過去版。","lv":1,"no":322},{"d":"aux","q":"めり","a":"推定（視覚）・婉曲","s":"終止形（ラ変型は連体形）","k":"○／めり／めり／める／めれ／○","t":"ラ変型","x":"「花咲くめり」","xj":"花が咲いているようだ。","n":"目で見た根拠のある推定。音・伝聞が根拠の「なり」と対。","lv":2,"no":323},{"d":"aux","q":"なり（推定）","a":"推定・伝聞","s":"終止形（ラ変型は連体形）","k":"○／なり／なり／なる／なれ／○","t":"ラ変型","x":"「男もすなる日記」","xj":"男もするという日記。","n":"音・伝聞が根拠。断定の「なり」（体言・連体形接続）と接続で識別。","lv":1,"no":324},{"d":"aux","q":"なり（断定）","a":"断定・存在","s":"体言・連体形","k":"なら／なり・に／なり／なる／なれ／なれ","t":"形容動詞ナリ型","x":"「これは水なり」","xj":"これは水である。","n":"連用形「に」＋「あり」で「にあり→なり」。","lv":1,"no":325},{"d":"aux","q":"たり（断定）","a":"断定","s":"体言","k":"たら／たり・と／たり／たる／たれ／たれ","t":"形容動詞タリ型","x":"「清盛、太政大臣たり」","xj":"清盛は太政大臣である。","n":"漢文訓読調。完了の「たり」（連用形接続）と区別。","lv":2,"no":326},{"d":"aux","q":"ごとし","a":"比況・例示","s":"体言・連体形＋が／の、連体形","k":"○／ごとく／ごとし／ごとき／○／○","t":"形容詞ク型","x":"「雪のごとし」","xj":"雪のようだ。","n":"「ごとくなり」も同じ。","lv":2,"no":327},{"d":"aux","q":"たし","a":"希望","s":"連用形","k":"たから／たく・たかり／たし／たき・たかる／たけれ／○","t":"形容詞ク型","x":"「見たし」","xj":"見たい。","n":"中世以降に発達。「まほし」の口語版。","lv":2,"no":328},{"d":"aux","q":"らし","a":"推定（根拠のある）","s":"終止形（ラ変型は連体形）","k":"○／○／らし／らし／らし／○","t":"無変化型","x":"「山風吹くらし」","xj":"山風が吹いているらしい。","n":"上代・和歌に多い。「けらし」は「けるらし」の縮約。","lv":3,"no":329},{"d":"aux","q":"ゆ","a":"受身・自発・可能","s":"未然形","k":"え／え／ゆ／ゆる／ゆれ／えよ","t":"下二段型","x":"「思ほゆ」","xj":"自然と思われる。","n":"上代の助動詞。「おぼゆ・きこゆ・見ゆ」に痕跡が残る。","lv":3,"no":330},{"d":"aux","q":"き（カ変・サ変接続）","a":"過去","s":"カ変・サ変には特殊接続","k":"","t":"特殊型","x":"「来（こ）し方」「せしかば」","xj":"過ぎ去った方向／〜したので。","n":"カ変は「こ・き」、サ変は「せ」に付く点が問われる。","lv":2,"no":331},{"d":"aux","q":"なむ（願望）","a":"【終助詞】他への願望（あつらえ）","s":"未然形","k":"","t":"終助詞","x":"「早く咲かなむ」","xj":"早く咲いてほしい。","n":"助動詞ではなく終助詞。未然形接続。「なむ」の識別で最重要。","lv":1,"no":332},{"d":"kei","q":"おはす","s":"尊敬","a":"いらっしゃる・おいでになる","b":"あり・をり・行く・来","m":"動作をする人（主語）への敬意","x":"「殿おはす」","xj":"殿がいらっしゃる。","n":"補助動詞「〜ておはす」でも使う。","lv":1,"no":333},{"d":"kei","q":"おはします","s":"尊敬","a":"いらっしゃる（より高い敬意）","b":"あり・をり・行く・来","m":"主語への敬意","x":"「帝おはします」","xj":"帝がいらっしゃる。","n":"「おはす」より敬意が高い。","lv":1,"no":334},{"d":"kei","q":"います・いますかり","s":"尊敬","a":"いらっしゃる","b":"あり・をり","m":"主語への敬意","x":"「翁いますかり」","xj":"翁がいらっしゃる。","n":"「ます」「まします」も同系。","lv":3,"no":335},{"d":"kei","q":"のたまふ","s":"尊敬","a":"おっしゃる","b":"言ふ","m":"主語への敬意","x":"「かくのたまふ」","xj":"このようにおっしゃる。","n":"「のたまはす」はさらに高い敬意。","lv":1,"no":336},{"d":"kei","q":"のたまはす","s":"尊敬","a":"おっしゃる（最高敬語）","b":"言ふ","m":"主語への敬意","x":"「帝のたまはす」","xj":"帝がおっしゃる。","n":"天皇・中宮クラスに使う。","lv":2,"no":337},{"d":"kei","q":"仰す（おほす）","s":"尊敬","a":"おっしゃる・お命じになる","b":"言ふ・命ず","m":"主語への敬意","x":"「仰せらる」","xj":"おっしゃる。","n":"「仰せらる」で二重尊敬。","lv":1,"no":338},{"d":"kei","q":"おぼす（思す）","s":"尊敬","a":"お思いになる","b":"思ふ","m":"主語への敬意","x":"「あはれとおぼす」","xj":"しみじみとお思いになる。","n":"「おぼしめす」はさらに高い。","lv":1,"no":339},{"d":"kei","q":"おぼしめす","s":"尊敬","a":"お思いになる（最高敬語）","b":"思ふ","m":"主語への敬意","x":"「帝おぼしめす」","xj":"帝がお思いになる。","n":"","lv":2,"no":340},{"d":"kei","q":"ごらんず（御覧ず）","s":"尊敬","a":"ご覧になる","b":"見る","m":"主語への敬意","x":"「文をごらんず」","xj":"お手紙をご覧になる。","n":"サ変動詞。","lv":1,"no":341},{"d":"kei","q":"きこしめす（聞こし召す）","s":"尊敬","a":"お聞きになる・召し上がる・お治めになる","b":"聞く・食ふ・飲む・治む","m":"主語への敬意","x":"「御酒きこしめす」","xj":"お酒を召し上がる。","n":"多義なので文脈で判断。","lv":1,"no":342},{"d":"kei","q":"めす（召す）","s":"尊敬","a":"お呼びになる・召し上がる・お召しになる・お乗りになる","b":"呼ぶ・食ふ・着る・乗る","m":"主語への敬意","x":"「御衣召す」","xj":"お着物をお召しになる。","n":"「〜召す」で複合尊敬語も作る。","lv":1,"no":343},{"d":"kei","q":"たまふ（四段）","s":"尊敬","a":"お〜になる・くださる","b":"与ふ／補助動詞","m":"主語への敬意","x":"「言ひ給ふ」","xj":"おっしゃる。","n":"補助動詞の用法が圧倒的に多い。","lv":1,"no":344},{"d":"kei","q":"おほとのごもる（大殿籠る）","s":"尊敬","a":"お休みになる","b":"寝（ぬ）・寝（い）ぬ","m":"主語への敬意","x":"「大殿籠りぬ」","xj":"お休みになった。","n":"","lv":2,"no":345},{"d":"kei","q":"あそばす（遊ばす）","s":"尊敬","a":"なさる・（詩歌管弦を）なさる","b":"す","m":"主語への敬意","x":"「琴あそばす」","xj":"琴をお弾きになる。","n":"","lv":2,"no":346},{"d":"kei","q":"つかはす（遣はす）","s":"尊敬","a":"おつかわしになる・お与えになる","b":"遣る・与ふ","m":"主語への敬意","x":"「使ひをつかはす」","xj":"使者をおつかわしになる。","n":"","lv":2,"no":347},{"d":"kei","q":"しろしめす（知ろし召す）","s":"尊敬","a":"ご存じである・お治めになる","b":"知る・治む","m":"主語への敬意","x":"「天の下しろしめす」","xj":"天下をお治めになる。","n":"","lv":3,"no":348},{"d":"kei","q":"たてまつる（奉る・尊敬）","s":"尊敬","a":"召し上がる・お召しになる・お乗りになる","b":"食ふ・着る・乗る","m":"主語への敬意","x":"「御衣たてまつる」","xj":"お召し物を着ていらっしゃる。","n":"謙譲の「たてまつる」と文脈で区別する。","lv":2,"no":349},{"d":"kei","q":"きこゆ（聞こゆ）","s":"謙譲","a":"申し上げる","b":"言ふ／補助動詞","m":"動作を受ける人（客体）への敬意","x":"「御文きこゆ」","xj":"お手紙を差し上げる。","n":"「〜きこゆ」で補助動詞。","lv":1,"no":350},{"d":"kei","q":"きこえさす","s":"謙譲","a":"申し上げる（より高い敬意）","b":"言ふ","m":"客体への敬意","x":"「宮にきこえさす」","xj":"中宮に申し上げる。","n":"","lv":2,"no":351},{"d":"kei","q":"まうす（申す）","s":"謙譲","a":"申し上げる","b":"言ふ／補助動詞","m":"客体への敬意","x":"「かく申す」","xj":"このように申し上げる。","n":"","lv":1,"no":352},{"d":"kei","q":"そうす（奏す）","s":"謙譲","a":"（天皇・上皇に）申し上げる","b":"言ふ","m":"天皇・上皇への敬意","x":"「帝に奏す」","xj":"帝に申し上げる。","n":"相手が天皇・上皇に限定される絶対敬語。","lv":1,"no":353},{"d":"kei","q":"けいす（啓す）","s":"謙譲","a":"（中宮・皇太子に）申し上げる","b":"言ふ","m":"中宮・東宮への敬意","x":"「中宮に啓す」","xj":"中宮に申し上げる。","n":"相手が中宮・東宮に限定される絶対敬語。","lv":1,"no":354},{"d":"kei","q":"たてまつる（奉る・謙譲）","s":"謙譲","a":"差し上げる・〜し申し上げる","b":"与ふ／補助動詞","m":"客体への敬意","x":"「文をたてまつる」","xj":"お手紙を差し上げる。","n":"補助動詞「〜たてまつる」が頻出。","lv":1,"no":355},{"d":"kei","q":"まゐる（参る）","s":"謙譲","a":"参上する・差し上げる","b":"行く・来・与ふ","m":"客体（行き先の人）への敬意","x":"「宮に参る」","xj":"御所に参上する。","n":"尊敬「召し上がる」の用法もあるので注意。","lv":1,"no":356},{"d":"kei","q":"まゐらす（参らす）","s":"謙譲","a":"差し上げる・〜し申し上げる","b":"与ふ／補助動詞","m":"客体への敬意","x":"「御文まゐらす」","xj":"お手紙を差し上げる。","n":"","lv":2,"no":357},{"d":"kei","q":"まうづ（詣づ）","s":"謙譲","a":"参上する・参詣する","b":"行く・来","m":"客体への敬意","x":"「社にまうづ」","xj":"神社に参詣する。","n":"","lv":2,"no":358},{"d":"kei","q":"まかる（罷る）","s":"謙譲","a":"退出する・（都から地方へ）行く","b":"去る・行く","m":"その場の高貴な人への敬意","x":"「宮より罷る」","xj":"御所から退出する。","n":"「まかづ」も同義。","lv":1,"no":359},{"d":"kei","q":"まかづ（罷づ）","s":"謙譲","a":"退出する","b":"出づ","m":"その場の高貴な人への敬意","x":"「里へ罷づ」","xj":"実家へ退出する。","n":"「まゐる」の対義語。","lv":1,"no":360},{"d":"kei","q":"つかうまつる（仕う奉る）","s":"謙譲","a":"お仕えする・〜して差し上げる","b":"仕ふ／補助動詞","m":"客体への敬意","x":"「歌つかうまつる」","xj":"歌をお作り申し上げる。","n":"「つかまつる」とも。","lv":2,"no":361},{"d":"kei","q":"うけたまはる（承る）","s":"謙譲","a":"お聞きする・お受けする","b":"聞く・受く","m":"客体への敬意","x":"「仰せをうけたまはる」","xj":"お言葉をお聞きする。","n":"","lv":2,"no":362},{"d":"kei","q":"たまはる（賜る）","s":"謙譲","a":"いただく","b":"受く","m":"与える人への敬意","x":"「禄をたまはる」","xj":"褒美をいただく。","n":"尊敬「お与えになる」の用法もある。","lv":2,"no":363},{"d":"kei","q":"たまふ（下二段）","s":"謙譲","a":"〜ております・〜させていただく","b":"補助動詞","m":"聞き手（話し相手・手紙の読み手）への敬意","x":"「まろは知り給へず」","xj":"私は存じません。","n":"会話文・手紙で「見・聞き・思ひ・知り」に付く。連用形「たまへ」・連体形「たまふる」が中心。","lv":1,"no":364},{"d":"kei","q":"はべり（侍り）","s":"丁寧／謙譲","a":"あります・ございます／お仕えする","b":"あり・をり","m":"聞き手への敬意（丁寧）","x":"「都にはべり」","xj":"都におります。","n":"会話文では丁寧語、地の文では謙譲語。","lv":1,"no":365},{"d":"kei","q":"さぶらふ（候ふ）","s":"丁寧／謙譲","a":"あります・ございます／お仕えする","b":"あり・をり","m":"聞き手への敬意（丁寧）","x":"「御前にさぶらふ」","xj":"御前に控えております。","n":"「さうらふ」とも。","lv":1,"no":366},{"d":"kei","q":"おほせらる","s":"尊敬","a":"おっしゃる（二重尊敬）","b":"言ふ","m":"主語への高い敬意","x":"「帝、おほせらる」","xj":"帝がおっしゃる。","n":"「仰す」＋尊敬「らる」。","lv":2,"no":367},{"d":"kei","q":"せ給ふ","s":"尊敬","a":"お〜になる（二重尊敬）","b":"補助","m":"主語への高い敬意","x":"「読ませ給ふ」","xj":"お読みになる。","n":"「せ」が使役でなく尊敬のとき、二重尊敬（最高敬語）。使役の対象「〜に」があれば使役。","lv":1,"no":368},{"d":"kei","q":"させ給ふ","s":"尊敬","a":"お〜になる（二重尊敬）","b":"補助","m":"主語への高い敬意","x":"「起きさせ給ふ」","xj":"お起きになる。","n":"四段・ナ変・ラ変以外に付く。使役の対象「〜に」が無ければ二重尊敬。","lv":1,"no":369},{"d":"kei","q":"しめ給ふ","s":"尊敬","a":"お〜になる（二重尊敬）","b":"補助","m":"主語への高い敬意","x":"「読ましめ給ふ」","xj":"お読みになる。","n":"漢文訓読調に多い。","lv":3,"no":370},{"d":"kei","q":"きこえ給ふ","s":"謙譲＋尊敬","a":"申し上げなさる","b":"補助","m":"客体と主語の双方への敬意","x":"「宮にきこえ給ふ」","xj":"中宮に申し上げなさる。","n":"謙譲＋尊敬の二方向敬語。","lv":2,"no":371},{"d":"kei","q":"たてまつり給ふ","s":"謙譲＋尊敬","a":"差し上げなさる","b":"補助","m":"客体と主語の双方への敬意","x":"「御文たてまつり給ふ」","xj":"お手紙を差し上げなさる。","n":"","lv":2,"no":372},{"d":"kei","q":"まゐらせ給ふ","s":"謙譲＋尊敬","a":"差し上げなさる","b":"補助","m":"客体と主語の双方への敬意","x":"「贈り物まゐらせ給ふ」","xj":"贈り物を差し上げなさる。","n":"「まゐらす」＋「給ふ」。","lv":3,"no":373},{"d":"kei","q":"ごらんぜさす","s":"尊敬＋使役","a":"お見せ申し上げる（ご覧に入れる）","b":"見す","m":"ご覧になる方（高貴な人）への敬意","x":"「絵をごらんぜさす」","xj":"絵をお見せ申し上げる。","n":"「ごらんず」＋使役「さす」。見る主体を高める形。","lv":3,"no":374},{"d":"kei","q":"のたまはせ給ふ","s":"尊敬","a":"おっしゃる（最高敬語）","b":"言ふ","m":"主語への最高敬意","x":"「のたまはせ給ふ」","xj":"おっしゃる。","n":"","lv":3,"no":375},{"d":"kei","q":"たまはす（賜はす）","s":"尊敬","a":"お与えになる","b":"与ふ","m":"主語への敬意","x":"「禄をたまはす」","xj":"褒美をお与えになる。","n":"","lv":3,"no":376},{"d":"kei","q":"おぼしめしなやむ","s":"尊敬","a":"お悩みになる","b":"思ひ悩む","m":"主語への敬意","x":"「おぼしめしなやむ」","xj":"お悩みになる。","n":"「おぼしめし〜」の複合語。","lv":3,"no":377},{"d":"ident","x":"「花咲かなむ」","w":"なむ","c":["終助詞（他への願望）","係助詞（強意）","完了「ぬ」未然形＋推量「む」","ナ変動詞活用語尾＋推量「む」"],"ans":0,"a":"未然形「咲か」に付いているので、他への願望を表す終助詞。「早く花が咲いてほしい」。","n":"直前が未然形なら終助詞、連用形なら「ぬ＋む」。","g":"なむ","lv":1,"no":378},{"d":"ident","x":"「花咲きなむ」","w":"なむ","c":["完了「ぬ」未然形＋推量「む」","終助詞（願望）","係助詞","ナ変活用語尾＋「む」"],"ans":0,"a":"連用形「咲き」に付いているので完了（強意）の「ぬ」＋推量の「む」。「きっと咲くだろう」。","n":"連用形接続＝完了「ぬ」の未然形「な」＋「む」。","g":"なむ","lv":1,"no":379},{"d":"ident","x":"「男なむありける」","w":"なむ","c":["係助詞（強意）","終助詞（願望）","完了＋推量","断定「なり」＋「む」"],"ans":0,"a":"体言「男」に付き、文末を連体形「ける」で結んでいる係助詞。訳は不要（強意）。","n":"未然形・連用形以外（体言・連体形など）に付き、結びが連体形なら係助詞。","g":"なむ","lv":1,"no":380},{"d":"ident","x":"「死なむ」","w":"なむ","c":["ナ変動詞の未然形活用語尾＋推量「む」","係助詞","終助詞","完了＋推量"],"ans":0,"a":"「死ぬ」はナ変。未然形「死な」＋推量「む」。","n":"ナ変は「死ぬ・往ぬ（去ぬ）」の二語だけ。","g":"なむ","lv":2,"no":381},{"d":"ident","x":"「男に笑はる」","w":"る","c":["受身の助動詞「る」","自発","可能","尊敬"],"ans":0,"a":"四段「笑ふ」の未然形「笑は」に付き、「男に」という動作主が示されているので受身。","n":"「〜に」＋「る／らる」は受身の目印。四段・ナ変・ラ変には「る」、それ以外には「らる」。","g":"る・れ","lv":1,"no":382},{"d":"ident","x":"「昔のこと思ひ出でらる」","w":"らる","c":["自発","受身","可能","尊敬"],"ans":0,"a":"「思ひ出づ」は心情語。自然とそうなる意で自発。","n":"心情・知覚の動詞＋「る／らる」は自発が多い。","g":"る・れ","lv":1,"no":383},{"d":"ident","x":"「え起きあがられず」","w":"られ","c":["可能","受身","自発","尊敬"],"ans":0,"a":"副詞「え」＋打消「ず」。可能の用法。","n":"可能は打消とセットになるのが原則。","g":"る・れ","lv":1,"no":384},{"d":"ident","x":"「殿、出でられけり」","w":"られ","c":["尊敬","受身","自発","可能"],"ans":0,"a":"主語が「殿」という高貴な人物で、他に敬語がない。尊敬。","n":"主語が貴人で受身・自発・可能では意味が通らないなら尊敬。","g":"る・れ","lv":1,"no":385},{"d":"ident","x":"「咲ける花」","w":"る","c":["完了・存続の助動詞「り」の連体形","受身「る」","断定","動詞の一部"],"ans":0,"a":"四段已然形（咲け）＋「り」の連体形「る」。「咲いている花」。","n":"「サ未四已」＋「る」＝助動詞「り」。","g":"る・れ","lv":2,"no":386},{"d":"ident","x":"「知らるる人」","w":"るる","c":["受身または尊敬の助動詞「る」の連体形","完了「り」","自発のみ","動詞の一部"],"ans":0,"a":"未然形「知ら」＋「る」の連体形「るる」。","n":"「るる／るれ」の形は「る」、「る／れ」で四段已然形に付くのは「り」。","g":"る・れ","lv":2,"no":387},{"d":"ident","x":"「都は静かに侍り」","w":"に","c":["形容動詞「静かなり」の連用形活用語尾","断定「なり」の連用形","完了「ぬ」の連用形","格助詞"],"ans":0,"a":"「静かなり」で一語の形容動詞。「に」はその連用形の一部。","n":"「に」の直前を切って意味が通らなければ形容動詞の語尾。","g":"に","lv":1,"no":388},{"d":"ident","x":"「これは水にあり」","w":"に","c":["断定「なり」の連用形","格助詞","完了「ぬ」の連用形","接続助詞"],"ans":0,"a":"体言「水」に付き、下に「あり」がある。断定「なり」の連用形。","n":"直前が体言・連体形で「に＋（や・か・も）＋あり／侍り」の形なら断定。","g":"に","lv":1,"no":389},{"d":"ident","x":"「花散りにけり」","w":"に","c":["完了「ぬ」の連用形","断定「なり」の連用形","格助詞","副詞の一部"],"ans":0,"a":"連用形「散り」に付き、下に「けり」。完了「ぬ」の連用形「に」。","n":"「にき・にけり・にたり」の「に」は完了。","g":"に","lv":1,"no":390},{"d":"ident","x":"「京に行く」","w":"に","c":["格助詞（場所・方向）","断定","完了","形容動詞語尾"],"ans":0,"a":"体言＋「に」で場所・方向を示す格助詞。","n":"下に用言があり「〜へ・〜で」と訳せれば格助詞。","g":"に","lv":2,"no":391},{"d":"ident","x":"「呼べど答へず」","w":"ど","c":["接続助詞（逆接確定条件）","疑問の副助詞","格助詞","終助詞"],"ans":0,"a":"已然形＋「ど・ども」で逆接確定条件。「呼ぶけれども」。","n":"已然形＋ば＝順接確定、已然形＋ど＝逆接確定。","g":"接続助詞","lv":2,"no":392},{"d":"ident","x":"「風吹けば波立つ」","w":"ば","c":["接続助詞（順接確定条件）","順接仮定条件","逆接","並列"],"ans":0,"a":"已然形「吹け」＋「ば」。「風が吹くので」。","n":"未然形＋ば＝仮定（もし〜なら）、已然形＋ば＝確定（〜ので・〜と）。","g":"接続助詞","lv":1,"no":393},{"d":"ident","x":"「風吹かば」","w":"ば","c":["接続助詞（順接仮定条件）","順接確定条件","逆接確定","強意"],"ans":0,"a":"未然形「吹か」＋「ば」。「もし風が吹いたら」。","n":"未然形接続なら必ず仮定。","g":"接続助詞","lv":1,"no":394},{"d":"ident","x":"「昔ありし人」","w":"し","c":["過去「き」の連体形","強意の副助詞","サ変動詞「す」の連用形","形容詞の語尾"],"ans":0,"a":"連用形「あり」に付き、体言「人」に係る。過去「き」の連体形。","n":"下に体言があり「〜た」と訳せれば過去の「き」。","g":"し","lv":1,"no":395},{"d":"ident","x":"「今しも来たり」","w":"し","c":["強意の副助詞","過去「き」の連体形","サ変の連用形","接続助詞"],"ans":0,"a":"「しも」「しぞ」など強意を添える副助詞。訳出不要。","n":"「し」を取り除いても文意が変わらなければ副助詞。","g":"し","lv":2,"no":396},{"d":"ident","x":"「物語などして遊ぶ」","w":"し","c":["サ変動詞「す」の連用形","過去「き」","副助詞","形容詞語尾"],"ans":0,"a":"「〜す」の連用形。「〜して」の形。","n":"直後が「て」で「する」と訳せればサ変。","g":"し","lv":2,"no":397},{"d":"ident","x":"「日暮れぬ」","w":"ぬ","c":["完了「ぬ」の終止形","打消「ず」の連体形","ナ変語尾","副詞の一部"],"ans":0,"a":"連用形「暮れ」＋完了「ぬ」。「日が暮れてしまった」。","n":"連用形接続なら完了、未然形接続なら打消の連体形。","g":"ぬ・ね","lv":1,"no":398},{"d":"ident","x":"「知らぬ人」","w":"ぬ","c":["打消「ず」の連体形","完了「ぬ」","ナ変語尾","断定"],"ans":0,"a":"未然形「知ら」＋打消「ず」の連体形「ぬ」。下に体言。","n":"下に体言があり未然形接続なら打消。","g":"ぬ・ね","lv":1,"no":399},{"d":"ident","x":"「とく行きね」","w":"ね","c":["完了「ぬ」の命令形","打消「ず」の已然形","ナ変語尾","終助詞"],"ans":0,"a":"連用形「行き」に付く完了「ぬ」の命令形。「早く行ってしまえ」。","n":"「〜てしまえ」と訳せれば完了の命令形。直前が連用形。","g":"ぬ・ね","lv":2,"no":400},{"d":"ident","x":"「知らねば」","w":"ね","c":["打消「ず」の已然形","完了「ぬ」の命令形","ナ変語尾","終助詞"],"ans":0,"a":"未然形＋「ず」の已然形「ね」＋接続助詞「ば」。「知らないので」。","n":"「ねば・ねど」の「ね」は打消の已然形。","g":"ぬ・ね","lv":1,"no":401},{"d":"ident","x":"「男もすなる日記」","w":"なる","c":["伝聞・推定「なり」の連体形","断定「なり」の連体形","形容動詞語尾","動詞「なる」"],"ans":0,"a":"終止形「す」に接続しているので伝聞・推定。「するという」。","n":"終止形接続なら伝聞推定、体言・連体形接続なら断定。","g":"なり","lv":1,"no":402},{"d":"ident","x":"「これなむ源氏の物語なる」","w":"なる","c":["断定「なり」の連体形","伝聞・推定","形容動詞語尾","動詞"],"ans":0,"a":"体言「物語」に接続しているので断定。係助詞「なむ」を受けて連体形「なる」で結んでいる。","n":"体言に直接付けば断定。終止形に付けば伝聞・推定。","g":"なり","lv":1,"no":403},{"d":"ident","x":"「静かなる夜」","w":"なる","c":["形容動詞「静かなり」の連体形活用語尾","断定「なり」","伝聞推定","動詞「なる」"],"ans":0,"a":"「静かなり」で一語。「なる」はその連体形の一部。","n":"語幹だけで意味をなさなければ形容動詞。","g":"なり","lv":2,"no":404},{"d":"ident","x":"「人の声して、門たたくなり」","w":"なり","c":["推定「なり」（音を根拠）","断定","形容動詞語尾","動詞"],"ans":0,"a":"音を聞いて判断しているので推定。「門をたたいているようだ」。","n":"聴覚が根拠なら推定の「なり」。終止形接続。","g":"なり","lv":2,"no":405},{"d":"ident","x":"「花咲きたり」","w":"たり","c":["完了・存続「たり」の終止形","断定「たり」","形容動詞タリ活用語尾","接続助詞"],"ans":0,"a":"連用形「咲き」に接続。完了・存続。","n":"連用形接続なら完了、体言接続なら断定。","g":"たり","lv":1,"no":406},{"d":"ident","x":"「清盛、太政大臣たり」","w":"たり","c":["断定「たり」の終止形","完了「たり」","形容動詞語尾","助詞"],"ans":0,"a":"体言「太政大臣」に接続。断定「たり」。","n":"体言＋「たり」で「〜である」。漢文訓読調。","g":"たり","lv":2,"no":407},{"d":"ident","x":"「堂々たり」","w":"たり","c":["形容動詞タリ活用の終止形活用語尾","断定","完了","副詞の一部"],"ans":0,"a":"「堂々たり」で一語の形容動詞（タリ活用）。","n":"漢語＋「たり」で一語なら形容動詞。","g":"たり","lv":3,"no":408},{"d":"ident","x":"「など泣くらむ」","w":"らむ","c":["現在の原因推量","過去推量","完了＋推量","動詞の一部"],"ans":0,"a":"疑問語「など」と呼応して「どうして泣いているのだろう」。","n":"疑問語があれば原因推量、無ければ現在推量。","g":"らむ","lv":1,"no":409},{"d":"ident","x":"「花は散りぬらむ」","w":"らむ","c":["現在推量（今ごろ散ってしまっているだろう）","過去推量","完了「ぬ」＋過去推量「けむ」","動詞の一部"],"ans":0,"a":"完了「ぬ」の終止形＋現在推量「らむ」。目の前にない今の状態を推量している。","n":"直前が完了「ぬ」なら「〜てしまっているだろう」。過去なら「けむ」。","g":"らむ","lv":2,"no":410},{"d":"ident","x":"「知るらむ」と「賢からむ」の「らむ／らん」の違い","w":"らむ","c":["終止形接続なら現在推量の助動詞","必ず動詞の一部","必ず過去推量","必ず断定"],"ans":0,"a":"終止形（ラ変型は連体形）に接続すれば助動詞「らむ」。形容詞「賢から＋む」は未然形＋「む」。","n":"活用語の何形に付いているかで切る。","g":"らむ","lv":3,"no":411},{"d":"ident","x":"「いかで見ばや」","w":"ばや","c":["終助詞（自己の願望）","接続助詞「ば」＋係助詞「や」","疑問","詠嘆"],"ans":0,"a":"未然形＋「ばや」で「〜たい」。「なんとかして見たい」。","n":"未然形接続の「ばや」は願望。","g":"ばや","lv":1,"no":412},{"d":"ident","x":"「大臣に歌よませ給ふ」","w":"せ","c":["使役（大臣に歌を詠ませる）","尊敬（二重尊敬）","過去「き」","サ変動詞の未然形"],"ans":0,"a":"使役の対象「大臣に」があるので使役。下に尊敬語「給ふ」があっても使役。","n":"「〜に…せ給ふ」は使役。対象が無ければ二重尊敬。","g":"す・さす","lv":1,"no":413},{"d":"ident","x":"「秋来ぬと目にはさやかに見えねども」","w":"ね","c":["打消「ず」の已然形","完了「ぬ」の命令形","動詞","終助詞"],"ans":0,"a":"「見えねども」＝「見えないけれども」。打消の已然形。","n":"「ねども」は打消。","g":"ぬ・ね","lv":2,"no":414},{"d":"ident","x":"「あはれなり」の「なり」","w":"なり","c":["形容動詞ナリ活用の終止形活用語尾","断定","伝聞推定","動詞"],"ans":0,"a":"「あはれなり」で一語の形容動詞。","n":"語幹「あはれ」＋「なり」で一語。","g":"なり","lv":2,"no":415},{"d":"ident","x":"「行かむとす」","w":"む","c":["意志（一人称）","推量（三人称）","勧誘","婉曲"],"ans":0,"a":"「〜しよう」と自分の意志を表す。","n":"「むとす＝〜しようとする」。","g":"む","lv":2,"no":416},{"d":"ident","x":"「かの花見む人は」","w":"む","c":["婉曲（〜ような）","意志","推量","命令"],"ans":0,"a":"文中の連体形「む」は婉曲・仮定。","n":"文中で体言に係る「む」は婉曲。","g":"む","lv":2,"no":417},{"d":"ident","x":"「いざ給へ、行かむ」","w":"む","c":["勧誘","意志","推量","婉曲"],"ans":0,"a":"相手を誘っているので勧誘。「さあ行きましょう」。","n":"「いざ」など呼びかけと呼応すれば勧誘。","g":"む","lv":2,"no":418},{"d":"ident","x":"「命長くもがな」","w":"もがな","c":["願望の終助詞（〜であってほしい）","詠嘆","疑問","禁止"],"ans":0,"a":"「もがな」は願望。「長くあってほしい」。","n":"「がな・もがな・にしがな・てしがな」は願望。","g":"終助詞","lv":2,"no":419},{"d":"ident","x":"「な鳴きそ」","w":"な〜そ","c":["禁止（〜してくれるな）","詠嘆","願望","強意"],"ans":0,"a":"「な＋連用形＋そ」で穏やかな禁止。「鳴かないでおくれ」。","n":"カ変・サ変は未然形に付く（な来そ・なせそ）。","g":"終助詞","lv":1,"no":420},{"d":"ident","x":"「あなかしこ、忘れ給ふな」","w":"な","c":["禁止の終助詞","詠嘆","願望","完了"],"ans":0,"a":"終止形＋「な」で強い禁止。「決してお忘れになるな」。","n":"文末の「な」は終止形接続なら禁止。","g":"終助詞","lv":2,"no":421},{"d":"ident","x":"「花の咲くを見る」","w":"の","c":["格助詞（主格）「花が」","連体修飾（〜の）","同格","準体格"],"ans":0,"a":"「咲く」の主語なので主格。","n":"連体修飾節の中の「の」は主格になりやすい。","g":"の・が","lv":1,"no":422},{"d":"ident","x":"「白き衣着たる男の、笠さしたる」","w":"の","c":["同格（〜で）","主格","連体修飾","準体格"],"ans":0,"a":"「男で、笠をさしている者」と訳す同格の「の」。","n":"「〜の…連体形」で下に体言を補えれば同格。","g":"の・が","lv":2,"no":423}]</script>
+<script>
+/* =========================================================
+   古文テスト — スタンドアロン版 v1
+   データ埋め込み / 進捗は端末ごとの localStorage
+   SRS・UIは「SAT・TOEFL 単語テスト」から移植
+   ========================================================= */
+
+const ITEMS = JSON.parse(document.getElementById('itemdata').textContent);
+
+const PROG_KEY='kb_prog_v1', LOG_KEY='kb_log_v1', SET_KEY='kb_set_v1',
+      DEV_KEY='kb_device_v1', META_KEY='kb_meta_v1';
+
+/* localStorage は環境によっては読み書きそのものが例外を投げる
+   （プライベートブラウズ、サイトデータをブロックする設定など）。
+   保存できない環境でもアプリ自体は動くようにラップしておく。 */
+const LS = {
+  ok: true,
+  get(k){ try{ return localStorage.getItem(k); }catch(e){ this.ok=false; return null; } },
+  set(k,v){ try{ localStorage.setItem(k,v); return true; }catch(e){ this.ok=false; return false; } }
+};
+
+let PROG={}, LOG={}, META={lastExport:null,lastImport:null}, DEVICE_ID='';
+let SET = { deck:'word', plan:'night', scope:'daily', timeMin:25, sessionSize:0, newPerDay:30,
+            dailyGoal:60, timeGoal:40, level:'', nef:false, tts:false,
+            rangeFrom:'', rangeTo:'', listSt:'', listDeck:'' };
+
+/* デッキ定義 */
+const DECKS = {
+  word:  {name:'古文単語',  icon:'📖', desc:'意味を答える。まずここが土台'},
+  aux:   {name:'助動詞',    icon:'🔧', desc:'意味・接続・活用をまとめて'},
+  kei:   {name:'敬語',      icon:'🎎', desc:'種類ともとの語、敬意の方向'},
+  ident: {name:'識別',      icon:'🔍', desc:'例文を見て4択で判別する'}
+};
+const DECK_KEYS = Object.keys(DECKS);
+
+/* LOG[date] = {n:評価回数, w:学習した項目数(ユニーク), nw:新規導入数, ms:学習ミリ秒,
+                r:[r1,r2,r3,r4], g:新たに定着した数, c:4択正解数, q:4択出題数} */
+function blankDay(){ return {n:0,w:0,nw:0,ms:0,r:[0,0,0,0],g:0,c:0,q:0}; }
+function normDay(v){
+  if (v == null) return blankDay();
+  if (typeof v === 'number') { const d = blankDay(); d.n = v; d.w = v; return d; }
+  const d = blankDay();
+  d.n=+v.n||0; d.w=+v.w||0; d.nw=+v.nw||0; d.ms=+v.ms||0; d.g=+v.g||0;
+  d.c=+v.c||0; d.q=+v.q||0;
+  if (Array.isArray(v.r)) for(let i=0;i<4;i++) d.r[i] = +v.r[i]||0;
+  return d;
+}
+function load(){
+  try{ PROG = JSON.parse(LS.get(PROG_KEY))||{}; }catch(e){ PROG={}; }
+  try{ const raw = JSON.parse(LS.get(LOG_KEY))||{}; LOG={};
+       Object.keys(raw).forEach(k=>LOG[k]=normDay(raw[k])); }catch(e){ LOG={}; }
+  try{ SET = Object.assign(SET, JSON.parse(LS.get(SET_KEY))||{}); }catch(e){}
+  try{ META = Object.assign(META, JSON.parse(LS.get(META_KEY))||{}); }catch(e){}
+  DEVICE_ID = LS.get(DEV_KEY);
+  if(!DEVICE_ID){ DEVICE_ID='端末-'+Math.random().toString(36).slice(2,6).toUpperCase();
+                  LS.set(DEV_KEY, DEVICE_ID); }
+}
+function saveProg(){ LS.set(PROG_KEY, JSON.stringify(PROG)); }
+function saveLog(){ LS.set(LOG_KEY, JSON.stringify(LOG)); }
+function saveSet(){ LS.set(SET_KEY, JSON.stringify(SET)); }
+function saveMeta(){ LS.set(META_KEY, JSON.stringify(META)); }
+
+const $ = id => document.getElementById(id);
+const now = () => Date.now();
+const DAY = 86400000;
+function ymd(d){ d=d||new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function dayN(off){ const d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+(off||0)); return d; }
+function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._timer); t._timer=setTimeout(()=>t.classList.remove('show'),1900); }
+/* 古語の読み上げ。歴史的仮名遣いのままだと読みが崩れるので簡易に現代仮名へ寄せる */
+function toModernKana(s){
+  return String(s).replace(/[（(].*?[）)]/g,'')
+    .replace(/ゐ/g,'い').replace(/ゑ/g,'え').replace(/ヰ/g,'イ').replace(/ヱ/g,'エ')
+    .replace(/([^あ-んア-ン])は/g,'$1わ');
+}
+function speak(w){ if(!SET.tts||!window.speechSynthesis) return;
+  try{ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(toModernKana(w));
+       u.lang='ja-JP'; u.rate=0.9; window.speechSynthesis.speak(u); }catch(e){} }
+function el(tag, cls, html){ const e=document.createElement(tag); if(cls) e.className=cls;
+  if(html!==undefined) e.innerHTML=html; return e; }
+
+/* 表示用の見出し（識別カードは例文の傍線語） */
+function headOf(it){ return it.d==='ident' ? it.w : it.q; }
+function shortOf(it){
+  if(it.d==='word') return it.a;
+  if(it.d==='aux')  return it.a;
+  if(it.d==='kei')  return it.s+'／'+it.a;
+  return it.c[it.ans];
+}
+
+/* ---------- Anki風 SRS ---------- */
+const V_IV=[10*60000, 86400000, 3*86400000, 7*86400000, 14*86400000, 30*86400000, 90*86400000];
+const V_GRAD=7;
+function pState(i){ return PROG[i]||null; }
+function ivLabel(ms){ if(ms<3600000) return Math.round(ms/60000)+'分';
+  if(ms<86400000) return Math.round(ms/3600000)+'時間'; return Math.round(ms/86400000)+'日'; }
+function vRate(idx, r, preview){
+  const st = pState(idx);
+  const cur = st && st.box!=null ? st.box : -1;
+  let nb, due; const n0 = now();
+  if(r===1){ nb=0; due=n0+V_IV[0]; }
+  else if(r===2){ nb=Math.max(0,cur); due=n0+Math.max(V_IV[0], Math.round((V_IV[nb]||V_IV[0])*0.4)); }
+  else if(r===3){ nb=cur+1; }
+  else { nb=cur+2; }
+  if(r>=3){ if(nb>=V_GRAD){ nb=V_GRAD; due=null; } else due=n0+V_IV[nb]; }
+  const label = nb>=V_GRAD ? '定着' : ivLabel(due-n0);
+  if(preview) return label;
+  const e = {box:nb, due, n:(st&&st.n||0)+1, lap:(st&&st.lap||0)+(r===1?1:0), t:n0};
+  if(st && st.f1!=null) e.f1=st.f1; else if(!st) e.f1=r;
+  PROG[idx]=e; saveProg();
+  return label;
+}
+function easyFirst(st){ if(!st) return false; if(st.f1!=null) return st.f1===4;
+  return st.n===1 && st.box===1 && !st.lap; }
+function vCls(st){
+  if(!st || st.box==null) return ['new','新規'];
+  if(st.box>=V_GRAD) return ['s3','定着'];
+  if(st.box===0) return ['s0','苦手'];
+  if(st.box<=3) return ['s1','学習中'];
+  return ['s2','定着間近'];
+}
+function poolIdx(deck){
+  const dk = deck===undefined ? SET.deck : deck;
+  const out=[];
+  for(let i=0;i<ITEMS.length;i++){
+    const it=ITEMS[i];
+    if(dk && it.d!==dk) continue;
+    if(SET.level && String(it.lv)!==SET.level) continue;
+    out.push(i);
+  }
+  return out;
+}
+function dueList(pool){ const n0=now(); return pool.filter(i=>{ const s=pState(i);
+  return s && s.box!=null && s.box<V_GRAD && s.due && s.due<=n0; }); }
+function newList(pool){ return pool.filter(i=>!pState(i)); }
+
+/* ---------- 今日の集計 ---------- */
+function today(){ return normDay(LOG[ymd()]); }
+function bumpDay(fn){ const k=ymd(); const d=normDay(LOG[k]); fn(d); LOG[k]=d; saveLog(); }
+function avgSecPerCard(){
+  let ms=0,n=0;
+  for(let i=0;i<30;i++){ const d=normDay(LOG[ymd(dayN(-i))]); ms+=d.ms; n+=d.n; }
+  if(n<20 || ms<=0) return 11;
+  return Math.min(60, Math.max(3, ms/1000/n));
+}
+function calcStreak(){
+  let s=0;
+  for(let i=0;;i++){ const d=normDay(LOG[ymd(dayN(-i))]);
+    if(d.n>0) s++; else if(i===0) continue; else break; }
+  return s;
+}
+function bestStreak(){
+  const keys=Object.keys(LOG).filter(k=>normDay(LOG[k]).n>0).sort();
+  let best=0, run=0, prev=null;
+  keys.forEach(k=>{
+    const d=new Date(k+'T00:00:00');
+    if(prev && (d-prev)===DAY) run++; else run=1;
+    if(run>best) best=run; prev=d;
+  });
+  return best;
+}
+function goalMetDays(days){
+  let c=0; for(let i=0;i<days;i++){ if(normDay(LOG[ymd(dayN(-i))]).w >= SET.dailyGoal) c++; } return c;
+}
+function boxDist(deck){
+  const d={new:0,s0:0,s1:0,s2:0,s3:0,total:0};
+  for(let i=0;i<ITEMS.length;i++){
+    if(deck && ITEMS[i].d!==deck) continue;
+    d.total++;
+    const st=pState(i);
+    if(!st){ d.new++; continue; }
+    if(st.box>=V_GRAD) d.s3++;
+    else if(st.box===0) d.s0++;
+    else if(st.box<=3) d.s1++;
+    else d.s2++;
+  }
+  return d;
+}
+
+/* =========================================================
+   タブ
+   ========================================================= */
+document.querySelectorAll('nav button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tab').forEach(t=>t.classList.add('hidden'));
+    $('tab-'+btn.dataset.tab).classList.remove('hidden');
+    if(btn.dataset.tab==='list') renderList(true);
+    if(btn.dataset.tab==='stats') renderStats();
+    if(btn.dataset.tab==='sync') renderSync();
+    if(btn.dataset.tab==='test') refreshModeSelect();
+    window.scrollTo(0,0);
+  });
+});
+
+/* =========================================================
+   プラン
+   ========================================================= */
+const PLANS = {
+  night:   {name:'🌙 夜のメイン', min:25, scope:'daily',  newCap:30,
+            desc:'新規をまとめて入れる。寝る前に入れた語は睡眠中に定着しやすい'},
+  morning: {name:'☀️ 朝の復習',   min:10, scope:'review', newCap:0,
+            desc:'昨夜の項目が10分〜1日の間隔で戻ってくる。新規は入れない'},
+  quick:   {name:'⚡ すきま',      min:5,  scope:'daily',  newCap:8,
+            desc:'移動中などに数分だけ。期限が来た項目を優先'},
+  custom:  {name:'⚙️ カスタム',    min:0,  scope:null,     newCap:null,
+            desc:'下の設定を自由に組み合わせる'}
+};
+function applyPlan(key){
+  SET.plan = key;
+  const p = PLANS[key];
+  if(key!=='custom'){
+    SET.timeMin = p.min; SET.scope = p.scope; SET.newPerDay = p.newCap; SET.sessionSize = 0;
+  }
+  saveSet(); refreshModeSelect();
+}
+function planDone(key){
+  const t = today();
+  if(key==='night')   return t.nw >= Math.min(PLANS.night.newCap, 20) || t.ms/60000 >= 22;
+  if(key==='morning') return t.n>0 && dueList(poolIdx()).length===0;
+  return false;
+}
+
+/* =========================================================
+   チップUI
+   ========================================================= */
+function chipRow(host, opts, current, onPick){
+  host.innerHTML='';
+  opts.forEach(([val,label,sub])=>{
+    const c = el('span','chip'+(String(current)===String(val)?' on':''),
+      esc(label)+(sub?`<span class="ct">${esc(sub)}</span>`:''));
+    c.onclick = ()=>{ onPick(val); };
+    host.appendChild(c);
+  });
+}
+const SCOPES = [
+  ['daily','📅 今日の分','復習+新規'],
+  ['review','🔁 復習のみ',''],
+  ['new','🆕 新規のみ',''],
+  ['weak','⚠️ 苦手優先',''],
+  ['all','🔀 全部',''],
+  ['range','🔢 番号範囲','']
+];
+function refreshModeSelect(){
+  /* --- デッキカード --- */
+  const dg = $('deckGrid'); dg.innerHTML='';
+  DECK_KEYS.forEach(k=>{
+    const D = DECKS[k], dist = boxDist(k);
+    const pool = poolIdx(k);
+    const nDue = dueList(pool).length;
+    const doneP = dist.total ? (dist.total-dist.new)/dist.total : 0;
+    const c = el('div','deck '+k+(SET.deck===k?' on':''));
+    c.innerHTML = `<div class="dn">${D.icon} ${D.name} <span class="tiny">${dist.total}</span></div>
+      <div class="dd">${esc(D.desc)}</div>
+      <div class="dt">🎓定着 ${dist.s3} ・ 期限 ${nDue}</div>
+      <div class="dbar"><i style="width:${Math.round(doneP*100)}%"></i></div>`;
+    c.onclick = ()=>{ SET.deck=k; saveSet(); refreshModeSelect(); };
+    dg.appendChild(c);
+  });
+  const allDist = boxDist('');
+  $('deckHint').textContent =
+    `全${allDist.total}項目 ・ 着手 ${allDist.total-allDist.new} ・ 🎓定着 ${allDist.s3}。デッキを選ぶと下の設定がそのデッキに効きます。`;
+
+  const pool = poolIdx();
+  const nDue = dueList(pool).length, nNew = newList(pool).length;
+
+  /* --- プランカード --- */
+  const pg = $('planGrid'); pg.innerHTML='';
+  Object.keys(PLANS).forEach(k=>{
+    const p = PLANS[k];
+    const done = planDone(k);
+    const c = el('div','plan'+(SET.plan===k?' on':'')+(done?' done':''));
+    let t = '';
+    if(k==='night')   t = `新規 最大${p.newCap} ・ ${p.min}分`;
+    else if(k==='morning') t = nDue ? `期限到来 ${nDue} ・ ${p.min}分` : '期限到来 0 — 夜の学習後に来ます';
+    else if(k==='quick')   t = `期限到来 ${nDue} ・ ${p.min}分`;
+    else t = '自由設定';
+    c.innerHTML = `<div class="pn">${p.name}</div><div class="pd">${esc(p.desc)}</div>
+      <div class="pt">${done?'✓ 今日は完了':esc(t)}</div>`;
+    c.onclick = ()=>applyPlan(k);
+    pg.appendChild(c);
+  });
+  const t = today();
+  $('planHint').textContent =
+    `今日: ${t.w}項目 / ${Math.round(t.ms/60000)}分 ・ 新規 ${t.nw} ・ 期限到来 ${nDue} ・ 未学習 ${nNew}（${DECKS[SET.deck].name}）`;
+
+  /* --- 設定チップ --- */
+  chipRow($('scopeChips'), SCOPES, SET.scope, v=>{ SET.scope=v; SET.plan='custom'; saveSet(); refreshModeSelect(); });
+  chipRow($('timeChips'), [[0,'指定なし'],[5,'5分'],[10,'10分'],[15,'15分'],[25,'25分'],[45,'45分'],[60,'60分']],
+    SET.timeMin, v=>{ SET.timeMin=+v; SET.plan='custom'; saveSet(); refreshModeSelect(); });
+  chipRow($('sizeChips'), [[0,'上限なし'],[10,'10'],[20,'20'],[30,'30'],[50,'50'],[100,'100']],
+    SET.sessionSize, v=>{ SET.sessionSize=+v; SET.plan='custom'; saveSet(); refreshModeSelect(); });
+  chipRow($('newChips'), [[0,'0（復習だけ）'],[5,'5'],[10,'10'],[20,'20'],[30,'30'],[50,'50']],
+    SET.newPerDay, v=>{ SET.newPerDay=+v; SET.plan='custom'; saveSet(); refreshModeSelect(); });
+  chipRow($('lvlChips'), [['','すべて'],['1','Lv1 最重要'],['2','Lv2 標準'],['3','Lv3 発展']],
+    SET.level, v=>{ SET.level=v; saveSet(); refreshModeSelect(); });
+  chipRow($('goalChips'), [[20,'20'],[40,'40'],[60,'60'],[100,'100']],
+    SET.dailyGoal, v=>{ SET.dailyGoal=+v; saveSet(); refreshModeSelect(); });
+  chipRow($('tgoalChips'), [[15,'15分'],[25,'25分'],[40,'40分'],[60,'60分']],
+    SET.timeGoal, v=>{ SET.timeGoal=+v; saveSet(); refreshModeSelect(); });
+
+  $('chipNef').classList.toggle('on', !!SET.nef);
+  $('rangeRow').classList.toggle('hidden', SET.scope!=='range');
+  $('rangeFrom').value = SET.rangeFrom||''; $('rangeTo').value = SET.rangeTo||'';
+
+  const est = estimate();
+  $('estLine').innerHTML = est.n
+    ? `この設定だと <b>約${est.n}項目</b>（うち新規${est.nw}）・ 目安 <b>約${est.min}分</b>`
+    : emptyReason(nDue, nNew);
+  $('startBtn').disabled = !est.n;
+
+  renderDesignNote();
+  renderTodayBanner();
+  updateStreakLabel();
+}
+function renderDesignNote(){
+  const sec = avgSecPerCard();
+  const nightNew = PLANS.night.newCap;
+  const nightMin = Math.round(nightNew*sec*1.6/60);
+  const morningCards = Math.round(PLANS.morning.min*60/sec);
+  const est = nightNew + morningCards;
+  $('designNote').innerHTML = `
+    <p class="tiny" style="line-height:1.8">
+      <b>設計の考え方</b><br>
+      🌙 夜 ${PLANS.night.min}分 … 新規 ${nightNew}項目（再出題込みで約${nightMin}分）＋ その日の期限ぶん<br>
+      ☀️ 朝 ${PLANS.morning.min}分 … 昨夜の項目が「1日後」で戻ってくる。約${morningCards}枚ぶん<br>
+      合わせて <b>1日およそ${est}項目</b>。目標${SET.dailyGoal}に対して
+      ${est>=SET.dailyGoal?'足ります':'やや不足なので、夜の新規上限を上げるか、すきま学習を1回挟むと届きます'}。<br>
+      <span class="muted">※ 1枚あたりの実測は今 ${sec.toFixed(1)}秒。学習するほどこの見積りは正確になります。
+      同じ項目をその日のうちに何度復習しても「学習した項目」は1回だけ数えます。</span>
+    </p>`;
+}
+function emptyReason(nDue, nNew){
+  const dn = DECKS[SET.deck].name;
+  if(SET.scope==='review')
+    return nDue===0
+      ? `☀️ いま「${dn}」で復習の期限が来ている項目はありません。夜のメインで新規を入れると、10分後・翌日と順に戻ってきます。`
+      : '⚠️ 条件が絞られすぎています。レベルを「すべて」に戻してみて。';
+  if(SET.scope==='new')
+    return nNew===0 ? `🎉 「${dn}」は全て着手済み。復習で定着させるフェーズです。`
+                    : '⚠️ 新規の上限が0になっています。上の「新規の上限」を増やして。';
+  if(SET.scope==='weak') return '⚠️ まだ「もう一度」を押した項目がありません（苦手が溜まると使えます）。';
+  if(SET.scope==='daily' && nDue===0 && (SET.newPerDay||0)===0)
+    return '⚠️ 新規の上限が0で、復習の期限も来ていません。「新規の上限」を増やすと始められます。';
+  if(SET.scope==='range') return '⚠️ その番号範囲に該当する項目がありません。範囲を広げてみて。';
+  return '⚠️ 今の設定では出題できる項目がありません（範囲や上限を変えてみて）。';
+}
+$('chipNef').addEventListener('click',()=>{ SET.nef=!SET.nef; saveSet(); refreshModeSelect(); });
+['rangeFrom','rangeTo'].forEach(id=>$(id).addEventListener('change',()=>{
+  SET.rangeFrom=$('rangeFrom').value; SET.rangeTo=$('rangeTo').value; saveSet(); refreshModeSelect(); }));
+
+/* =========================================================
+   デッキ構築
+   ========================================================= */
+function estimate(){
+  const deck = buildDeck(true);
+  const sec = avgSecPerCard();
+  const nw = deck.filter(i=>!pState(i)).length;
+  const cards = deck.length + Math.round(nw*0.6);
+  return { n:deck.length, nw, min:Math.max(1, Math.round(cards*sec/60)) };
+}
+function buildDeck(){
+  let pool = poolIdx();
+  if(SET.nef) pool = pool.filter(i=>!easyFirst(pState(i)));
+  const scope = SET.scope;
+  const sec = avgSecPerCard();
+  let cap = SET.sessionSize>0 ? SET.sessionSize : Infinity;
+  if(SET.timeMin>0){
+    const byTime = Math.max(5, Math.round(SET.timeMin*60/sec/1.35));
+    cap = Math.min(cap, byTime);
+  }
+  if(cap===Infinity) cap = 150;
+
+  let deck;
+  if(scope==='daily' || scope==='review'){
+    const due = shuffle(dueList(pool));
+    if(scope==='review') deck = due;
+    else {
+      const introduced = today().nw;
+      const allow = Math.max(0, (SET.newPerDay||0) - introduced);
+      const fresh = newList(pool).sort((a,b)=>ITEMS[a].no-ITEMS[b].no).slice(0, allow);
+      deck = due.concat(shuffle(fresh));
+    }
+  }
+  else if(scope==='new') deck = newList(pool).sort((a,b)=>ITEMS[a].no-ITEMS[b].no);
+  else if(scope==='weak'){
+    deck = pool.filter(i=>{ const s=pState(i); return s && s.lap>0; })
+               .sort((a,b)=>(pState(b).lap||0)-(pState(a).lap||0));
+  }
+  else if(scope==='range'){
+    const from = parseInt(SET.rangeFrom)||1, to = parseInt(SET.rangeTo)||999999;
+    deck = shuffle(pool.filter(i=>{ const no=ITEMS[i].no; return no!=null && no>=from && no<=to; }));
+  }
+  else deck = shuffle(pool);
+  return deck.slice(0, cap);
+}
+</script>
+<script>
+/* =========================================================
+   セッション
+   ========================================================= */
+let F = null;
+let tickTimer = null;
+
+function newSession(deck){
+  return { deck, i:0, flipped:false, stats:{1:0,2:0,3:0,4:0}, hist:null,
+           t0:now(), cardT0:now(), failStreak:{}, uniq:new Set(), grad:0, newSeen:0,
+           pick:null, order:null, qc:0, qq:0,
+           limitMs: SET.timeMin>0 ? SET.timeMin*60000 : 0 };
+}
+$('startBtn').addEventListener('click',()=>{
+  const deck = buildDeck();
+  if(!deck.length){ toast('出題できる項目がない（設定を変えてみて）'); return; }
+  F = newSession(deck);
+  $('modeSelect').classList.add('hidden');
+  $('quizArea').classList.remove('hidden');
+  startTick();
+  renderFC();
+});
+function startTick(){
+  stopTick();
+  if(!F || !F.limitMs) return;
+  tickTimer = setInterval(()=>{
+    const tm = $('fcTimer'); if(!tm) return;
+    const left = Math.max(0, F.limitMs - (now()-F.t0));
+    tm.textContent = '⏱ 残り' + Math.floor(left/60000) + ':' + String(Math.floor(left/1000)%60).padStart(2,'0');
+    tm.classList.toggle('low', left < 60000);
+  }, 1000);
+}
+function stopTick(){ if(tickTimer){ clearInterval(tickTimer); tickTimer=null; } }
+
+function fcRate(r){
+  if(!F || !F.flipped || F.i>=F.deck.length) return;
+  const idx = F.deck[F.i];
+  const prev = pState(idx);
+  const wasNew = !prev;
+  const firstToday = !prev || ymd(new Date(prev.t||0)) !== ymd();
+  const wasGrad = prev && prev.box>=V_GRAD;
+  const prevStreak = F.failStreak[idx]||0;
+  const streak = r===1 ? prevStreak+1 : 0;
+  const spent = Math.min(180000, now()-F.cardT0);
+  const wasQuiz = ITEMS[idx].d==='ident';
+  const wasCorrect = wasQuiz && F.pick===ITEMS[idx].ans;
+  F.hist = { i:F.i, idx, prev: prev?JSON.parse(JSON.stringify(prev)):null, r,
+             reqIdx:null, prevStreak, spent, wasNew, firstToday, wasGrad, wasQuiz, wasCorrect };
+
+  const label = vRate(idx, r);
+  F.stats[r]++; F.failStreak[idx]=streak; F.uniq.add(idx);
+  if(wasNew) F.newSeen++;
+  if(wasQuiz){ F.qq++; if(wasCorrect) F.qc++; }
+  const st = pState(idx);
+  const nowGrad = st.box>=V_GRAD;
+  if(nowGrad && !wasGrad) F.grad++;
+
+  bumpDay(d=>{
+    d.n++; d.ms += spent; d.r[r-1]++;
+    if(firstToday) d.w++;
+    if(wasNew) d.nw++;
+    if(nowGrad && !wasGrad) d.g++;
+    if(wasQuiz){ d.q++; if(wasCorrect) d.c++; }
+  });
+
+  if(streak>=4){ st.due = now(); PROG[idx]=st; saveProg(); }
+  else if(st.box===0 && r<=3){
+    const at = Math.min(F.i+6, F.deck.length);
+    F.deck.splice(at, 0, idx);
+    F.hist.reqIdx = at;
+  }
+  F.i++; F.flipped=false; F.pick=null; F.order=null; F.cardT0=now();
+  toast(streak>=4 ? `「${headOf(ITEMS[idx])}」4連続不正解 — 次回すぐ出す` : '次回: '+label);
+  checkMilestoneToast();
+  if(F.limitMs && (now()-F.t0) >= F.limitMs && F.i < F.deck.length){ finishFC('time'); return; }
+  renderFC();
+}
+function fcUndo(){
+  if(!F || !F.hist) return;
+  const hh = F.hist;
+  if(hh.reqIdx!=null) F.deck.splice(hh.reqIdx,1);
+  if(hh.prev) PROG[hh.idx]=hh.prev; else delete PROG[hh.idx];
+  saveProg();
+  F.stats[hh.r]--;
+  if(hh.wasNew) F.newSeen--;
+  if(hh.wasQuiz){ F.qq--; if(hh.wasCorrect) F.qc--; }
+  bumpDay(d=>{
+    d.n=Math.max(0,d.n-1); d.ms=Math.max(0,d.ms-hh.spent); d.r[hh.r-1]=Math.max(0,d.r[hh.r-1]-1);
+    if(hh.firstToday) d.w=Math.max(0,d.w-1);
+    if(hh.wasNew) d.nw=Math.max(0,d.nw-1);
+    if(hh.wasQuiz){ d.q=Math.max(0,d.q-1); if(hh.wasCorrect) d.c=Math.max(0,d.c-1); }
+  });
+  F.failStreak[hh.idx]=hh.prevStreak||0;
+  F.i=hh.i; F.flipped=true; F.hist=null; F.cardT0=now();
+  F.pick=null; F.order=null;
+  renderFC();
+}
+function backToModeSelect(){
+  stopTick(); F=null;
+  $('quizArea').classList.add('hidden');
+  $('modeSelect').classList.remove('hidden');
+  refreshModeSelect();
+  window.scrollTo(0,0);
+}
+
+/* ---- リング（今日の達成度） ---- */
+function ringSvg(size){
+  const t = today();
+  const wp = SET.dailyGoal>0 ? Math.min(1, t.w/SET.dailyGoal) : 0;
+  const mp = SET.timeGoal>0 ? Math.min(1, (t.ms/60000)/SET.timeGoal) : 0;
+  const C1 = 2*Math.PI*52, C2 = 2*Math.PI*37;
+  return `<svg class="ring" viewBox="0 0 120 120" style="${size?`width:${size}px;height:${size}px`:''}">
+    <circle cx="60" cy="60" r="52" fill="none" stroke="#ebe8ee" stroke-width="9"/>
+    <circle cx="60" cy="60" r="52" fill="none" stroke="${wp>=1?'#2b7150':'#6a4fa3'}" stroke-width="9"
+      stroke-linecap="round" stroke-dasharray="${C1}" stroke-dashoffset="${C1*(1-wp)}"
+      transform="rotate(-90 60 60)"/>
+    <circle cx="60" cy="60" r="37" fill="none" stroke="#f0eef2" stroke-width="7"/>
+    <circle cx="60" cy="60" r="37" fill="none" stroke="${mp>=1?'#2b7150':'#a05c17'}" stroke-width="7"
+      stroke-linecap="round" stroke-dasharray="${C2}" stroke-dashoffset="${C2*(1-mp)}"
+      transform="rotate(-90 60 60)"/>
+    <text x="60" y="57" text-anchor="middle" font-size="26" font-weight="700" fill="#1e1b20">${t.w}</text>
+    <text x="60" y="74" text-anchor="middle" font-size="12" fill="#61596b">/ ${SET.dailyGoal}</text>
+  </svg>`;
+}
+function todayMsg(){
+  const t = today(), st = calcStreak();
+  const remW = Math.max(0, SET.dailyGoal - t.w);
+  const remM = Math.max(0, SET.timeGoal - Math.round(t.ms/60000));
+  if(t.w===0 && st>0) return {cls:'warn', html:`🔥 <b>${st}日連続</b>で続いています。今日はまだ0項目 — <b>1セットだけでも</b>回して記録を切らさない。`};
+  if(t.w===0) return {cls:'bb', html:`今日はまだ学習していません。まずは <b>${PLANS.quick.min}分のすきま学習</b>からでも。`};
+  if(remW===0 && remM===0) return {cls:'ok', html:`🎉 今日の目標を達成（${t.w}項目 / ${Math.round(t.ms/60000)}分）。ここから先は<b>すべて上積み</b>です。`};
+  if(remW===0) return {cls:'ok', html:`✅ 項目数の目標クリア（${t.w}）。あと<b>${remM}分</b>で時間の目標も達成。`};
+  if(remW<=10) return {cls:'ok', html:`あと<b>${remW}項目</b>で今日の目標。<b>1セットで届きます</b>。`};
+  return {cls:'bb', html:`今日 <b>${t.w}項目</b> / 目標${SET.dailyGoal} — あと<b>${remW}</b>（残り約${Math.max(1,Math.round(remW*avgSecPerCard()/60))}分）。`};
+}
+function renderTodayBanner(){
+  const m = todayMsg();
+  $('todayBanner').innerHTML = `<div class="banner ${m.cls}">${m.html}</div>`;
+}
+function updateStreakLabel(){
+  const s = calcStreak();
+  const lbl = $('streakLabel');
+  lbl.textContent = s>0 ? `🔥 ${s}日連続` : '';
+  lbl.classList.toggle('hot', s>=7);
+}
+
+/* ---- セッション完了 ---- */
+function finishFC(reason){
+  stopTick();
+  const t = today();
+  const min = Math.max(1, Math.round((now()-F.t0)/60000));
+  const tot = F.stats[1]+F.stats[2]+F.stats[3]+F.stats[4];
+  const acc = tot ? Math.round((F.stats[3]+F.stats[4])/tot*100) : 0;
+  const remW = Math.max(0, SET.dailyGoal - t.w);
+  const nDue = dueList(poolIdx()).length;
+
+  const wrap = el('div','fcwrap');
+  const c = el('div','card');
+  c.appendChild(el('h2',null, reason==='time' ? '⏱ 時間になりました' : 'セッション完了 🎉'));
+
+  const grid = el('div','grid2');
+  grid.appendChild(el('div','kpi bb', `<b>${F.uniq.size}</b><div>学習した項目</div>`));
+  grid.appendChild(el('div','kpi', `<b>${min}分</b><div>かかった時間</div>`));
+  grid.appendChild(el('div','kpi ok', `<b>${acc}%</b><div>思い出せた率</div>`));
+  grid.appendChild(el('div','kpi pp', `<b>${F.grad}</b><div>🎓 新たに定着</div>`));
+  c.appendChild(grid);
+
+  if(F.qq) c.appendChild(el('p','muted', `4択の正答率: <b>${Math.round(F.qc/F.qq*100)}%</b>（${F.qc}/${F.qq}問）`));
+
+  c.appendChild(el('div',null,
+    `<span style="color:var(--ng)">もう一度 ${F.stats[1]}</span> ・
+     <span style="color:var(--warn)">難しい ${F.stats[2]}</span> ・
+     <span style="color:var(--bb)">普通 ${F.stats[3]}</span> ・
+     <span style="color:var(--ok)">簡単 ${F.stats[4]}</span>`));
+
+  const tw = el('div','todaywrap'); tw.style.marginTop='16px';
+  tw.innerHTML = ringSvg(112);
+  const side = el('div','todayside');
+  if(remW===0){
+    side.innerHTML = `<div class="big">🎉 今日の目標<em>達成</em></div>
+      <div class="muted">${t.w}項目 / ${Math.round(t.ms/60000)}分 ・ 連続${calcStreak()}日目</div>`;
+  } else {
+    side.innerHTML = `<div class="big">あと <em>${remW}</em> で今日の目標</div>
+      <div class="muted">約${Math.max(1,Math.round(remW*avgSecPerCard()/60))}分 ・ 期限到来はあと${nDue}</div>`;
+  }
+  tw.appendChild(side);
+  c.appendChild(tw);
+
+  const nx = nextMilestone();
+  if(nx) c.appendChild(el('p','muted','次のマイルストーン: '+nx.label+' まであと '+nx.rem));
+
+  const act = el('div','fcbtns'); act.style.marginTop='18px';
+  const again = el('button','btn', remW>0 ? '▶ もう1セット続ける' : '▶ さらに続ける');
+  again.onclick = ()=>{
+    const deck = buildDeck();
+    if(!deck.length){ toast('これ以上出題できる項目がない'); backToModeSelect(); return; }
+    F = newSession(deck);
+    startTick(); renderFC(); window.scrollTo(0,0);
+  };
+  const back = el('button','btn ghost','設定に戻る');
+  back.onclick = backToModeSelect;
+  act.appendChild(again); act.appendChild(back);
+  c.appendChild(act);
+
+  wrap.appendChild(c);
+  $('fcRoot').innerHTML=''; $('fcRoot').appendChild(wrap);
+  $('progressBar').style.width='100%';
+  updateStreakLabel();
+}
+
+/* ---- カードの中身 ---- */
+function markWord(sentence, w){
+  const e = esc(sentence);
+  if(!w) return e;
+  const wEsc = esc(w).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  try{ return e.replace(new RegExp(wEsc,'g'), '<mark>'+esc(w)+'</mark>'); }
+  catch(err){ return e; }
+}
+const KATSU_LABEL = ['未然','連用','終止','連体','已然','命令'];
+function katsuHtml(k){
+  if(!k) return '';
+  const parts = k.split('／');
+  if(parts.length!==6) return `<div class="fmeta"><b>活用</b>：${esc(k)}</div>`;
+  return '<div class="katsu">'+parts.map((p,i)=>
+    `<div>${esc(p)}<span>${KATSU_LABEL[i]}</span></div>`).join('')+'</div>';
+}
+function backHtml(it){
+  if(it.d==='word'){
+    let h = `<div class="fjp">${esc(it.a)}</div>`;
+    if(it.x) h += `<div class="fex">${esc(it.x)}<span class="jp">${esc(it.xj)}</span></div>`;
+    if(it.n) h += `<div class="fnote">💡 ${esc(it.n)}</div>`;
+    return h;
+  }
+  if(it.d==='aux'){
+    let h = `<div class="fjp">${esc(it.a)}</div>`;
+    h += `<div class="fmeta"><b>接続</b>：${esc(it.s)}　／　<b>型</b>：${esc(it.t)}</div>`;
+    h += katsuHtml(it.k);
+    if(it.x) h += `<div class="fex">${esc(it.x)}<span class="jp">${esc(it.xj)}</span></div>`;
+    if(it.n) h += `<div class="fnote">💡 ${esc(it.n)}</div>`;
+    return h;
+  }
+  if(it.d==='kei'){
+    let h = `<div class="fjp">${esc(it.s)}　${esc(it.a)}</div>`;
+    h += `<div class="fmeta"><b>もとの語</b>：${esc(it.b)}<br><b>敬意の方向</b>：${esc(it.m)}</div>`;
+    if(it.x) h += `<div class="fex">${esc(it.x)}<span class="jp">${esc(it.xj)}</span></div>`;
+    if(it.n) h += `<div class="fnote">💡 ${esc(it.n)}</div>`;
+    return h;
+  }
+  return '';
+}
+
+function renderFC(){
+  if(!F) return;
+  if(F.i>=F.deck.length){ finishFC('deck'); return; }
+  $('progressBar').style.width = (F.i/F.deck.length*100)+'%';
+  const idx = F.deck[F.i], it = ITEMS[idx], st = pState(idx);
+  const [cls,label] = vCls(st);
+  const remDue = F.deck.slice(F.i).filter(x=>{ const s=pState(x); return s && s.box!=null; }).length;
+  const remNew = F.deck.length - F.i - remDue;
+
+  const wrap = el('div','fcwrap');
+  const prog = el('div','fcprog');
+  let ph = `<span>残り ${F.deck.length-F.i}</span><span class="dq">復習 ${remDue}</span><span class="nq">新規 ${remNew}</span>`;
+  if(F.limitMs){
+    const left = Math.max(0, F.limitMs-(now()-F.t0));
+    ph += `<span class="tm" id="fcTimer">⏱ 残り${Math.floor(left/60000)}:${String(Math.floor(left/1000)%60).padStart(2,'0')}</span>`;
+  }
+  prog.innerHTML = ph;
+  wrap.appendChild(prog);
+
+  const stateLine = `<span class="stchip ${cls}">${label}</span>`
+    + `<span class="tagpill ${it.d}">${DECKS[it.d].name}</span>`
+    + (st&&st.lap?` ・つまずき${st.lap}回`:'') + (it.no!=null?` ・No.${it.no}`:'');
+
+  if(it.d==='ident'){ renderQuizCard(wrap, idx, it, stateLine); }
+  else { renderFlipCard(wrap, idx, it, stateLine); }
+
+  const sub = el('div','fcbtns');
+  if(F.hist){ const un = el('button','btn gray sm','↩ 元に戻す (U)'); un.onclick=fcUndo; sub.appendChild(un); }
+  const quit = el('button','btn gray sm','終了 (Esc)'); quit.onclick=()=>finishFC('quit');
+  sub.appendChild(quit);
+  wrap.appendChild(sub);
+
+  wrap.appendChild(el('div','kbdrow', it.d==='ident'
+    ? 'キー操作: <kbd>1</kbd>〜<kbd>4</kbd>で選択 → もう一度<kbd>A</kbd> 難しい<kbd>S</kbd> 普通<kbd>D</kbd> 簡単<kbd>F</kbd> ・ <kbd>U</kbd>戻す <kbd>Esc</kbd>終了'
+    : 'キー操作: <kbd>Space</kbd>表示 → もう一度<kbd>A</kbd> 難しい<kbd>S</kbd> 普通<kbd>D</kbd> 簡単<kbd>F</kbd> ・ <kbd>R</kbd>読み上げ <kbd>U</kbd>戻す <kbd>Esc</kbd>終了'));
+
+  $('fcRoot').innerHTML=''; $('fcRoot').appendChild(wrap);
+  if(!F.flipped && it.d!=='ident'){ F.cardT0 = now(); speak(it.q); }
+}
+
+function renderFlipCard(wrap, idx, it, stateLine){
+  const card = el('div','fcard');
+  const wRow = el('div','fw'); wRow.textContent = it.q;
+  if(window.speechSynthesis){
+    const sp = el('button','spk','🔊'); sp.title='読み上げ (R)';
+    sp.onclick = ev=>{ ev.stopPropagation(); speak(it.q); };
+    wRow.appendChild(sp);
+  }
+  card.appendChild(wRow);
+  if(it.d==='word' && it.s) card.appendChild(el('div','fpos', esc(it.s)));
+
+  if(F.flipped){
+    const b = el('div'); b.innerHTML = backHtml(it); b.style.width='100%';
+    card.appendChild(b);
+  } else {
+    const q = it.d==='word' ? 'スペース / タップで意味を表示'
+            : it.d==='aux'  ? '意味・接続・活用を思い出してからタップ'
+            : '尊敬／謙譲／丁寧ともとの語を思い出してからタップ';
+    card.appendChild(el('div','hint', q));
+  }
+  card.appendChild(el('div','fstate', stateLine));
+  card.onclick = ()=>{
+    const sel = window.getSelection();
+    if(sel && !sel.isCollapsed && card.contains(sel.anchorNode)) return;
+    F.flipped=!F.flipped; renderFC();
+  };
+  wrap.appendChild(card);
+
+  const btns = el('div','fcbtns');
+  if(F.flipped){
+    ratingButtons(btns, idx, 0);
+  } else {
+    const flip = el('button','btn','答えを表示（タップ / Space）');
+    flip.onclick = ()=>{ F.flipped=true; renderFC(); };
+    btns.appendChild(flip);
+  }
+  wrap.appendChild(btns);
+}
+
+function renderQuizCard(wrap, idx, it, stateLine){
+  const card = el('div','fcard nosel');
+  card.appendChild(el('div','qsent', markWord(it.x, it.w)));
+  card.appendChild(el('div','qhint', `傍線部「${esc(it.w)}」は何か？`));
+
+  if(!F.order) F.order = shuffle(it.c.map((_,i)=>i));
+
+  const ch = el('div','choices');
+  F.order.forEach((oi,pos)=>{
+    const b = el('button','choice', `<kbd>${pos+1}</kbd><span>${esc(it.c[oi])}</span>`);
+    if(F.pick!=null){
+      if(oi===it.ans) b.classList.add('correct');
+      else if(oi===F.pick) b.classList.add('wrong');
+      else b.classList.add('dim');
+      b.disabled = true;
+    } else {
+      b.onclick = ()=>pickChoice(oi);
+    }
+    ch.appendChild(b);
+  });
+  card.appendChild(ch);
+
+  if(F.pick!=null){
+    const ok = F.pick===it.ans;
+    card.appendChild(el('div','verdict '+(ok?'o':'x'),
+      `${ok?'⭕️ 正解':'❌ 不正解'} — ${esc(it.a)}<span class="tip">🔑 ${esc(it.n)}</span>`));
+  }
+  card.appendChild(el('div','fstate', stateLine));
+  wrap.appendChild(card);
+
+  const btns = el('div','fcbtns');
+  if(F.pick!=null) ratingButtons(btns, idx, F.pick===it.ans?3:1);
+  wrap.appendChild(btns);
+}
+function pickChoice(oi){
+  if(!F || F.pick!=null) return;
+  F.pick = oi; F.flipped = true;
+  renderFC();
+}
+function ratingButtons(host, idx, suggest){
+  [[1,'もう一度','r1','A'],[2,'難しい','r2','S'],[3,'普通','r3','D'],[4,'簡単','r4','F']].forEach(([r,nm,rc,kb])=>{
+    const b = el('button','rbtn '+rc+(suggest===r?' sug':''), `<b>${nm}</b><small>${vRate(idx,r,true)}</small><kbd>${kb}</kbd>`);
+    b.onclick = ()=>fcRate(r);
+    host.appendChild(b);
+  });
+}
+
+document.addEventListener('keydown', ev=>{
+  const tag = document.activeElement.tagName;
+  if(tag==='INPUT'||tag==='SELECT'||tag==='TEXTAREA') return;
+  if(!F) return;
+  const k = ev.key.toLowerCase();
+  if(ev.key==='Escape'){ backToModeSelect(); return; }
+  if(F.i>=F.deck.length) return;
+  const it = ITEMS[F.deck[F.i]];
+  if(it.d==='ident' && F.pick==null){
+    if('1234'.includes(ev.key)){
+      const pos = +ev.key-1;
+      if(F.order && pos<F.order.length) pickChoice(F.order[pos]);
+    }
+    return;
+  }
+  if(ev.key===' '||ev.key==='Enter'){
+    ev.preventDefault();
+    if(!F.flipped){ F.flipped=true; renderFC(); } else fcRate(3);
+    return;
+  }
+  if(F.flipped && it.d!=='ident' && '1234'.includes(ev.key)){ fcRate(+ev.key); return; }
+  if(F.flipped && {a:1,s:2,d:3,f:4}[k]){ fcRate({a:1,s:2,d:3,f:4}[k]); return; }
+  if(k==='r'){ speak(headOf(it)); return; }
+  if(k==='u'||k==='z'){ fcUndo(); return; }
+});
+
+/* =========================================================
+   マイルストーン
+   ========================================================= */
+const MS_GRAD=[10,25,50,100,150,200,300,423], MS_STREAK=[3,7,14,30,60,100,365],
+      MS_TOTAL=[100,300,700,1500,3000,6000,12000];
+function totalReviews(){ let n=0; Object.keys(LOG).forEach(k=>n+=normDay(LOG[k]).n); return n; }
+function milestones(){
+  const g = boxDist('').s3, s = calcStreak(), t = totalReviews();
+  const out = [];
+  const push = (arr,cur,ic,fmt)=>{
+    const next = arr.find(x=>x>cur);
+    const prevV = [...arr].reverse().find(x=>x<=cur) || 0;
+    out.push({ic, label:fmt(next||arr[arr.length-1]), cur, next, prevV,
+      got: !next, pct: next ? Math.min(1,(cur-prevV)/(next-prevV)) : 1,
+      rem: next ? (next-cur) : 0});
+  };
+  push(MS_GRAD, g, '🎓', v=>`定着 ${v}項目`);
+  push(MS_STREAK, s, '🔥', v=>`${v}日連続`);
+  push(MS_TOTAL, t, '💪', v=>`通算 ${v}回の想起`);
+  return out;
+}
+function nextMilestone(){
+  const ms = milestones().filter(m=>m.next).sort((a,b)=>a.rem-b.rem)[0];
+  if(!ms) return null;
+  return { label: ms.label, rem: ms.rem + (ms.label.includes('日')?'日':(ms.label.includes('回')?'回':'項目')) };
+}
+let lastMsSig = '';
+function checkMilestoneToast(){
+  const g = boxDist('').s3;
+  if(MS_GRAD.includes(g) && lastMsSig !== 'g'+g){
+    lastMsSig = 'g'+g;
+    setTimeout(()=>toast(`🎓 定着 ${g}項目を突破！`), 900);
+    return;
+  }
+  const t = today();
+  if(t.w === SET.dailyGoal && lastMsSig !== 'goal'+ymd()){
+    lastMsSig = 'goal'+ymd();
+    setTimeout(()=>toast(`🎉 今日の目標 ${SET.dailyGoal}項目 達成！`), 900);
+  }
+}
+</script>
+<script>
+/* =========================================================
+   分析タブ
+   ========================================================= */
+function renderStats(){
+  const root = $('statsRoot'); root.innerHTML='';
+  const t = today(), dist = boxDist('');
+  const streak = calcStreak(), best = Math.max(streak, bestStreak());
+
+  /* --- 1. 今日 --- */
+  const c0 = el('div','card');
+  c0.appendChild(el('h2',null,'今日の達成度'));
+  const tw = el('div','todaywrap');
+  tw.innerHTML = ringSvg();
+  const side = el('div','todayside');
+  const m = todayMsg();
+  side.innerHTML = `<div class="big">${m.html}</div>
+    <div class="legendrow">
+      <span><i style="background:var(--bb)"></i>項目 ${t.w} / ${SET.dailyGoal}</span>
+      <span><i style="background:var(--warn)"></i>時間 ${Math.round(t.ms/60000)} / ${SET.timeGoal}分</span>
+    </div>
+    <div class="legendrow">
+      <span>新規 ${t.nw}</span><span>想起 ${t.n}回</span><span>🎓 ${t.g} 定着</span>
+      ${t.q?`<span>4択 ${t.c}/${t.q}正解</span>`:''}
+    </div>`;
+  tw.appendChild(side);
+  c0.appendChild(tw);
+  root.appendChild(c0);
+
+  /* --- 2. KPI --- */
+  const touched = dist.total - dist.new;
+  const rt = retention(7);
+  const kp = el('div','grid2');
+  kp.appendChild(el('div','kpi ok', `<b>${dist.s3}</b><div>🎓 定着した項目</div>`));
+  kp.appendChild(el('div','kpi bb', `<b>${touched}</b><div>着手した項目（全${dist.total}）</div>`));
+  kp.appendChild(el('div','kpi'+(rt.pct>=80?' ok':rt.pct>=60?'':' ng'),
+    `<b>${rt.n?rt.pct+'%':'—'}</b><div>思い出せた率（7日）</div>`));
+  kp.appendChild(el('div','kpi warn', `<b>${streak}日</b><div>連続学習（最長${best}日）</div>`));
+  root.appendChild(kp);
+
+  /* --- 3. デッキ別の進み具合 --- */
+  const cd = el('div','card');
+  cd.appendChild(el('h2',null,'デッキ別の進み具合'));
+  DECK_KEYS.forEach(k=>{
+    const d = boxDist(k), D = DECKS[k];
+    const nDue = dueList(poolIdx(k)).length;
+    const row = el('div'); row.style.marginBottom='14px';
+    row.innerHTML = `<div style="display:flex;justify-content:space-between;font-size:13.5px;font-weight:600">
+        <span>${D.icon} ${D.name}</span>
+        <span class="muted">🎓${d.s3} / 着手${d.total-d.new} / 全${d.total}</span></div>`;
+    const sb = el('div','stackbar');
+    [['#2b7150',d.s3],['#2f5d9e',d.s2],['#a05c17',d.s1],['#a53f52',d.s0],['#d5d0d8',d.new]]
+      .forEach(([col,v])=>{ if(!v) return;
+        const e = el('div', null, v/d.total>0.08?String(v):'');
+        e.style.width=(v/d.total*100)+'%'; e.style.background=col;
+        if(col==='#d5d0d8') e.style.color='#61596b';   /* 薄いグレー上の白文字は読めない */
+        e.title=v+'項目'; sb.appendChild(e); });
+    row.appendChild(sb);
+    row.appendChild(el('div','tiny', `期限到来 ${nDue} ・ 定着率 ${Math.round(d.s3/d.total*100)}%`));
+    cd.appendChild(row);
+  });
+  cd.appendChild(el('div','legendrow',
+    ['#2b7150 定着','#2f5d9e 定着間近','#a05c17 学習中','#a53f52 苦手','#d5d0d8 未学習']
+      .map(s=>{ const [c,n]=s.split(' '); return `<span><i style="background:${c}"></i>${n}</span>`; }).join('')));
+  root.appendChild(cd);
+
+  /* --- 4. 直近14日 --- */
+  const c2 = el('div','card');
+  c2.appendChild(el('h2',null,'直近14日の学習量'));
+  const days=[]; for(let i=13;i>=0;i--) days.push(ymd(dayN(-i)));
+  const vals = days.map(d=>normDay(LOG[d]).w);
+  const mx = Math.max(SET.dailyGoal, ...vals, 1);
+  const bars = el('div','bar14');
+  days.forEach((d,i)=>{
+    const v = vals[i], bh = Math.round(88*v/mx);
+    const b = el('div','b');
+    const met = v>=SET.dailyGoal;
+    b.innerHTML = `<i class="${met?'met':''}" style="height:${bh}px"></i>
+      <span style="bottom:${bh+2}px">${v||''}</span>
+      <em>${d.slice(8)}</em>`;
+    b.title = `${d}: ${v}項目 / ${Math.round(normDay(LOG[d]).ms/60000)}分`;
+    bars.appendChild(b);
+  });
+  c2.appendChild(bars);
+  const gl = el('div','goalline');
+  gl.innerHTML = `<i style="top:-${Math.round(88*SET.dailyGoal/mx)+2}px"></i>
+    <span style="top:-${Math.round(88*SET.dailyGoal/mx)+11}px">目標${SET.dailyGoal}</span>`;
+  c2.appendChild(gl);
+  c2.appendChild(el('div','barxlab',''));
+  const met14 = days.filter((d,i)=>vals[i]>=SET.dailyGoal).length;
+  const sum14 = vals.reduce((a,b)=>a+b,0);
+  const min14 = days.reduce((a,d)=>a+normDay(LOG[d]).ms,0)/60000;
+  c2.appendChild(el('p','muted',
+    `14日で ${sum14}項目 / ${Math.round(min14)}分 ・ 目標達成 <b>${met14}/14日</b> ・ 1日平均 ${Math.round(sum14/14)}項目`));
+  root.appendChild(c2);
+
+  /* --- 5. これから来る復習 --- */
+  const c3 = el('div','card');
+  c3.appendChild(el('h2',null,'これから来る復習'));
+  const fc = forecast(7);
+  const fmx = Math.max(1, ...fc.map(x=>x.n));
+  const fbars = el('div','bar14 fc');
+  fc.forEach(x=>{
+    const bh = Math.round(88*x.n/fmx);
+    const b = el('div','b');
+    b.innerHTML = `<i style="height:${bh}px"></i><span style="bottom:${bh+2}px">${x.n||''}</span><em>${x.lbl}</em>`;
+    fbars.appendChild(b);
+  });
+  c3.appendChild(fbars);
+  c3.appendChild(el('div','barxlab',''));
+  const overdue = dueList(poolIdx('')).length;
+  c3.appendChild(el('p','muted',
+    overdue ? `いま期限が来ているのは <b>${overdue}項目</b>（全デッキ）。溜めるほど1日の負荷が上がるので、毎日少しずつ消化するのが結局いちばん楽。`
+            : '期限到来はゼロ。いいペースです。'));
+  root.appendChild(c3);
+
+  /* --- 6. 手応えの内訳 --- */
+  const c4 = el('div','card');
+  c4.appendChild(el('h2',null,'手応えの内訳（直近7日）'));
+  const rr = retention(7);
+  if(!rr.n) c4.appendChild(el('div','empty','まだデータがない'));
+  else{
+    const rsegs = [[rr.r[0],'#a53f52','もう一度'],[rr.r[1],'#a05c17','難しい'],
+                   [rr.r[2],'#6a4fa3','普通'],[rr.r[3],'#2b7150','簡単']];
+    const rb = el('div','stackbar');
+    rsegs.forEach(([v,col])=>{ if(!v) return;
+      const d = el('div',null, v/rr.n>0.08?String(v):''); d.style.width=(v/rr.n*100)+'%';
+      d.style.background=col; rb.appendChild(d); });
+    c4.appendChild(rb);
+    const rl = el('div','legendrow');
+    rl.innerHTML = rsegs.map(([v,col,nm])=>`<span><i style="background:${col}"></i>${nm} ${v}</span>`).join('');
+    c4.appendChild(rl);
+    const advice = rr.pct>=90 ? '簡単すぎるかも。新規の上限を上げるか、レベルを広げると効率が上がる。'
+      : rr.pct>=75 ? 'ちょうどいい負荷。この調子。'
+      : rr.pct>=55 ? 'やや難しめ。1日の新規を少し減らすと定着しやすい。'
+      : '負荷が高すぎる。新規を減らして復習に寄せると楽になる。';
+    c4.appendChild(el('p','muted', `思い出せた率 <b>${rr.pct}%</b>（普通+簡単 ÷ 全評価）— ${advice}`));
+    const q = quizAcc(14);
+    if(q.q) c4.appendChild(el('p','muted', `識別4択の正答率（14日）: <b>${Math.round(q.c/q.q*100)}%</b>（${q.c}/${q.q}問）`));
+  }
+  root.appendChild(c4);
+
+  /* --- 7. ペースと完走予測 --- */
+  const c5 = el('div','card');
+  c5.appendChild(el('h2',null,'ペースと完走予測'));
+  const pace = pacePerDay(14);
+  const remain = dist.new;
+  const kp2 = el('div','grid2');
+  kp2.appendChild(el('div','kpi', `<b>${pace.w}</b><div>1日平均の項目数（14日）</div>`));
+  kp2.appendChild(el('div','kpi', `<b>${pace.nw}</b><div>1日平均の新規</div>`));
+  kp2.appendChild(el('div','kpi', `<b>${avgSecPerCard().toFixed(1)}秒</b><div>1枚あたりの平均時間</div>`));
+  kp2.appendChild(el('div','kpi', `<b>${fmtDur(totalMin())}</b><div>通算の学習時間</div>`));
+  c5.appendChild(kp2);
+  if(remain===0) c5.appendChild(el('p','muted','全ての項目に着手済み。あとは復習で定着させるフェーズ。'));
+  else if(pace.nw>0){
+    const days = Math.ceil(remain/pace.nw);
+    const d = new Date(now()+days*DAY);
+    c5.appendChild(el('p','muted',
+      `未学習が <b>${remain}項目</b>。今のペース（新規${pace.nw}/日）なら <b>約${days}日後（${d.getMonth()+1}/${d.getDate()}）</b>に全項目へ着手できる計算。`));
+    c5.appendChild(el('p','muted', `参考: 30日で終えるなら1日 ${Math.ceil(remain/30)}項目、60日なら1日 ${Math.ceil(remain/60)}項目の新規ペース。`));
+  } else {
+    c5.appendChild(el('p','muted',`未学習が <b>${remain}項目</b>。新規を1日${SET.newPerDay}入れると約${Math.ceil(remain/Math.max(1,SET.newPerDay))}日で一周できる。`));
+  }
+  root.appendChild(c5);
+
+  /* --- 8. マイルストーン --- */
+  const c6 = el('div','card');
+  c6.appendChild(el('h2',null,'マイルストーン'));
+  milestones().forEach(ms=>{
+    const r = el('div','msrow'+(ms.got?' got':''));
+    r.innerHTML = `<div class="ic">${ms.ic}</div>
+      <div class="tx"><b>${esc(ms.label)}</b>
+        <div>${ms.got?'達成済み':`現在 ${ms.cur} — あと ${ms.rem}`}</div>
+        <div class="msbar"><i style="width:${Math.round(ms.pct*100)}%"></i></div>
+      </div>`;
+    c6.appendChild(r);
+  });
+  root.appendChild(c6);
+
+  /* --- 9. 学習カレンダー --- */
+  const c7 = el('div','card');
+  c7.appendChild(el('h2',null,'学習カレンダー（12週）'));
+  const hg = el('div','heatgrid');
+  const start = dayN(-83);
+  const off = start.getDay();
+  for(let i=0;i<off;i++) hg.appendChild(el('div','heatcell'));
+  for(let i=0;i<84;i++){
+    const d = dayN(-83+i), key = ymd(d), dd = normDay(LOG[key]);
+    const lvl = dd.w>=SET.dailyGoal ? 4 : dd.w===0 ? 0 : dd.w<SET.dailyGoal*0.25 ? 1 : dd.w<SET.dailyGoal*0.6 ? 2 : 3;
+    const c = el('div','heatcell'); c.dataset.l = lvl;
+    c.title = `${key}: ${dd.w}項目 / ${Math.round(dd.ms/60000)}分`;
+    hg.appendChild(c);
+  }
+  c7.appendChild(hg);
+  c7.appendChild(el('p','muted',
+    `緑 = 1日の目標(${SET.dailyGoal}項目)達成日。直近84日で <b>${goalMetDays(84)}日</b>達成。`));
+  root.appendChild(c7);
+
+  /* --- 10. つまずきワースト --- */
+  const c8 = el('div','card');
+  c8.appendChild(el('h2',null,'つまずきワースト15'));
+  const weak = [];
+  for(let i=0;i<ITEMS.length;i++){ const st=pState(i); if(st&&st.lap>0) weak.push(i); }
+  weak.sort((a,b)=>(pState(b).lap||0)-(pState(a).lap||0));
+  if(!weak.length) c8.appendChild(el('div','empty','まだ「もう一度」を押した項目がない'));
+  else{
+    const box = el('div');
+    box.innerHTML = weak.slice(0,15).map(i=>{
+      const it=ITEMS[i], st=pState(i), [cl,lb]=vCls(st);
+      return `<div class="word-item"><div style="flex:1;min-width:0">
+        <div class="w">${esc(headOf(it))}<span class="tagpill ${it.d}">${DECKS[it.d].name}</span></div>
+        <div class="m">${esc(shortOf(it))}</div></div>
+        <div style="text-align:right;flex-shrink:0">
+          <span class="stchip ${cl}">${lb}</span>
+          <div class="tiny">つまずき ${st.lap}回</div></div></div>`;
+    }).join('');
+    c8.appendChild(box);
+    const b = el('button','btn ghost sm block','⚠️ この苦手だけで学習する');
+    b.style.marginTop='10px';
+    b.onclick = ()=>{
+      SET.scope='weak'; SET.plan='custom'; saveSet();
+      document.querySelector('nav button[data-tab="test"]').click();
+      toast('出題範囲を「苦手優先」にした（デッキは'+DECKS[SET.deck].name+'）');
+    };
+    c8.appendChild(b);
+  }
+  root.appendChild(c8);
+}
+function retention(days){
+  const r=[0,0,0,0]; let n=0;
+  for(let i=0;i<days;i++){ const d=normDay(LOG[ymd(dayN(-i))]);
+    for(let j=0;j<4;j++){ r[j]+=d.r[j]; n+=d.r[j]; } }
+  return { r, n, pct: n?Math.round((r[2]+r[3])/n*100):0 };
+}
+function quizAcc(days){
+  let c=0,q=0;
+  for(let i=0;i<days;i++){ const d=normDay(LOG[ymd(dayN(-i))]); c+=d.c; q+=d.q; }
+  return {c,q};
+}
+function forecast(days){
+  const out=[];
+  for(let i=0;i<days;i++){
+    const s = dayN(i).getTime(), e = s+DAY;
+    let n=0;
+    for(const k in PROG){ const st=PROG[k];
+      if(!st || st.box==null || st.box>=V_GRAD || !st.due) continue;
+      if(i===0){ if(st.due < e) n++; }
+      else if(st.due>=s && st.due<e) n++;
+    }
+    out.push({n, lbl: i===0?'今日':i===1?'明日':(dayN(i).getMonth()+1)+'/'+dayN(i).getDate()});
+  }
+  return out;
+}
+function pacePerDay(days){
+  let w=0, nw=0, act=0;
+  for(let i=0;i<days;i++){ const d=normDay(LOG[ymd(dayN(-i))]); w+=d.w; nw+=d.nw; if(d.n>0) act++; }
+  return { w: Math.round(w/days), nw: Math.round(nw/days), active: act };
+}
+function totalMin(){ let ms=0; Object.keys(LOG).forEach(k=>ms+=normDay(LOG[k]).ms); return ms/60000; }
+function fmtDur(min){
+  if(min < 1) return Math.round(min*60)+'秒';
+  if(min < 90) return Math.round(min)+'分';
+  const h = Math.floor(min/60);
+  return h+'時間'+Math.round(min-h*60)+'分';
+}
+
+/* =========================================================
+   一覧
+   ========================================================= */
+let listShown = 80;
+['searchBox','sortBy'].forEach(id=>$(id).addEventListener('input',()=>renderList(true)));
+function renderList(reset){
+  if(reset) listShown=80;
+  chipRow($('listDeckChips'),
+    [['','すべて']].concat(DECK_KEYS.map(k=>[k, DECKS[k].icon+' '+DECKS[k].name])),
+    SET.listDeck, v=>{ SET.listDeck=v; saveSet(); renderList(true); });
+  chipRow($('listStChips'), [['','すべて'],['new','未学習'],['s0','苦手'],['s1','学習中'],['s2','定着間近'],['s3','定着']],
+    SET.listSt, v=>{ SET.listSt=v; saveSet(); renderList(true); });
+  const q = $('searchBox').value.trim(), sort=$('sortBy').value;
+  const idxs=[];
+  for(let i=0;i<ITEMS.length;i++){
+    const it=ITEMS[i];
+    if(SET.listDeck && it.d!==SET.listDeck) continue;
+    if(q){
+      const hay = [headOf(it), shortOf(it), it.x||'', it.a||'', it.n||''].join(' ');
+      if(!hay.includes(q)) continue;
+    }
+    if(SET.listSt && vCls(pState(i))[0]!==SET.listSt) continue;
+    idxs.push(i);
+  }
+  const rank = st=>!st?1:st.box===0?0:st.box<V_GRAD?2:3;
+  if(sort==='due') idxs.sort((a,b)=>{ const sa=pState(a),sb=pState(b);
+    return (sa&&sa.due!=null?sa.due:Infinity)-(sb&&sb.due!=null?sb.due:Infinity); });
+  else if(sort==='status') idxs.sort((a,b)=>rank(pState(a))-rank(pState(b)));
+  else if(sort==='lap') idxs.sort((a,b)=>((pState(b)||{}).lap||0)-((pState(a)||{}).lap||0));
+  else idxs.sort((a,b)=>ITEMS[a].no-ITEMS[b].no);
+
+  $('listCount').textContent = `${idxs.length}項目（先頭 ${Math.min(listShown, idxs.length)}件を表示）`;
+  const shown = idxs.slice(0, listShown), le = $('itemList');
+  if(!shown.length){ le.innerHTML='<div class="empty">該当する項目がない</div>'; $('listMoreRow').innerHTML=''; return; }
+  le.innerHTML = shown.map(i=>{
+    const it=ITEMS[i], st=pState(i), [cl,lb]=vCls(st);
+    const dueStr = st && st.box!=null && st.box<V_GRAD && st.due
+      ? '次回 '+new Date(st.due).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric'}) : '';
+    return `<div class="word-item"><div style="flex:1;min-width:0">
+      <div class="w"><span class="muted">No.${it.no}</span> ${esc(headOf(it))}<span class="tagpill ${it.d}">${DECKS[it.d].name}</span></div>
+      <div class="m">${esc(shortOf(it))}${dueStr?' ・'+dueStr:''}${st&&st.lap?' ・つまずき'+st.lap:''}</div>
+      </div><span class="stchip ${cl}">${lb}</span></div>`;
+  }).join('');
+  $('listMoreRow').innerHTML='';
+  if(idxs.length>listShown){
+    const more = el('button','btn ghost block', `さらに表示（残り${idxs.length-listShown}件）`);
+    more.onclick = ()=>{ listShown+=120; renderList(false); };
+    $('listMoreRow').appendChild(more);
+  }
+}
+
+/* =========================================================
+   同期
+   ========================================================= */
+function syncPayload(){
+  return { app:'kobun-test', v:1, device:DEVICE_ID,
+           exported:new Date().toISOString(), prog:PROG, log:LOG };
+}
+function renderSync(){
+  $('deviceBadge').textContent = DEVICE_ID;
+  $('syncInfo').textContent = [
+    META.lastExport ? '最終エクスポート: '+new Date(META.lastExport).toLocaleString('ja-JP') : '書き出し履歴なし',
+    META.lastImport ? '最終インポート: '+new Date(META.lastImport).toLocaleString('ja-JP') : '取り込み履歴なし'
+  ].join(' ／ ');
+}
+function saveFile(filename, text){
+  try{
+    const blob = new Blob([text],{type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 4000);
+    return {ok:true};
+  }catch(e){ return {ok:false, msg:'この環境ではファイル保存が使えない。「コードをコピー」を使って'}; }
+}
+$('exportFileBtn').addEventListener('click', ()=>{
+  const d = new Date();
+  const name = `kobun_sync_${DEVICE_ID}_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.json`;
+  const r = saveFile(name, JSON.stringify(syncPayload()));
+  if(r.ok){ META.lastExport=now(); saveMeta(); renderSync(); toast('ファイルを書き出した'); }
+  else toast(r.msg);
+});
+$('exportCodeBtn').addEventListener('click', async ()=>{
+  const code = btoa(unescape(encodeURIComponent(JSON.stringify(syncPayload()))));
+  const area = $('exportCodeArea'); area.value=code; area.classList.remove('hidden'); area.rows=6;
+  let copied=false;
+  try{ if(navigator.clipboard&&navigator.clipboard.writeText){ await navigator.clipboard.writeText(code); copied=true; } }catch(e){}
+  if(!copied){ try{ area.select(); document.execCommand('copy'); copied=true; }catch(e){} }
+  $('exportCodeHint').classList.toggle('hidden', copied);
+  META.lastExport=now(); saveMeta(); renderSync();
+  toast(copied?'コードをコピーした':'コードを表示した（手動でコピーして）');
+});
+function mergeIncoming(p){
+  if(!p || typeof p!=='object' || !p.prog) throw new Error('invalid');
+  let added=0, updated=0;
+  Object.keys(p.prog).forEach(k=>{
+    const inc=p.prog[k], cur=PROG[k];
+    if(!cur){ PROG[k]=inc; added++; }
+    else if((inc.t||0)>(cur.t||0)){ PROG[k]=inc; updated++; }
+  });
+  Object.entries(p.log||{}).forEach(([k,v])=>{
+    const a=normDay(LOG[k]), b=normDay(v);
+    LOG[k] = { n:Math.max(a.n,b.n), w:Math.max(a.w,b.w), nw:Math.max(a.nw,b.nw),
+               ms:Math.max(a.ms,b.ms), g:Math.max(a.g,b.g),
+               c:Math.max(a.c,b.c), q:Math.max(a.q,b.q),
+               r:[0,1,2,3].map(i=>Math.max(a.r[i],b.r[i])) };
+  });
+  saveProg(); saveLog(); META.lastImport=now(); saveMeta();
+  return {added, updated};
+}
+$('importFileBtn').addEventListener('click',()=>$('importFile').click());
+$('importFile').addEventListener('change', e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const rd=new FileReader();
+  rd.onload=()=>{ try{ const r=mergeIncoming(JSON.parse(rd.result));
+      toast(`取り込み完了（新規${r.added} / 更新${r.updated}）`); renderSync(); refreshModeSelect();
+    }catch(err){ toast('読み込み失敗: ファイルの形式が不正'); } };
+  rd.readAsText(f); e.target.value='';
+});
+$('importCodeBtn').addEventListener('click',()=>{
+  const raw=$('importCodeArea').value.trim();
+  if(!raw){ toast('コードを貼り付けて'); return; }
+  try{
+    const r=mergeIncoming(JSON.parse(decodeURIComponent(escape(atob(raw)))));
+    toast(`取り込み完了（新規${r.added} / 更新${r.updated}）`);
+    $('importCodeArea').value=''; renderSync(); refreshModeSelect();
+  }catch(err){ toast('読み込み失敗: コードの形式が不正'); }
+});
+$('resetBtn').addEventListener('click',()=>{
+  if(!confirm('この端末の学習記録を全て削除する？（元に戻せない。他の端末には影響しない）')) return;
+  PROG={}; LOG={}; saveProg(); saveLog();
+  toast('この端末の記録を削除した'); refreshModeSelect();
+});
+
+function updateTtsBtn(){ $('ttsBtn').textContent = SET.tts?'🔊':'🔇'; $('ttsBtn').style.opacity = SET.tts?'1':'.5'; }
+$('ttsBtn').addEventListener('click',()=>{ SET.tts=!SET.tts;
+  if(!SET.tts&&window.speechSynthesis) speechSynthesis.cancel();
+  saveSet(); updateTtsBtn(); toast(SET.tts?'読み上げON（古語は現代仮名に寄せて読みます）':'読み上げOFF'); });
+
+/* ===== 初期化 ===== */
+load();
+updateTtsBtn();
+(function autoPlan(){
+  if(LS.get('kb_planTouched')) return;
+  const h = new Date().getHours();
+  /* 朝でも期限到来がゼロなら「朝の復習」は空振りになるので夜のメインを出す */
+  const morning = (h>=4 && h<11) && dueList(poolIdx()).length>0;
+  SET.plan = morning ? 'morning' : 'night';
+  applyPlan(SET.plan);
+})();
+document.addEventListener('click', ()=>LS.set('kb_planTouched','1'), {once:true});
+refreshModeSelect();
+
+/* ---- オフライン対応(Service Worker) ---- */
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      reg.addEventListener('updatefound', () => {
+        const nw = reg.installing;
+        if (!nw) return;
+        nw.addEventListener('statechange', () => {
+          if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+            toast('新しいバージョンがあります。次回起動時に切り替わります');
+          }
+        });
+      });
+    }).catch(() => {});
+  });
+}
+function updateNetLabel(){
+  const e = $('netLabel');
+  if (!e) return;
+  const off = !navigator.onLine;
+  e.textContent = off ? '✈️ オフライン' : '';
+  e.title = off ? '電波が無くても学習できます。記録はこの端末に保存されます。' : '';
+}
+window.addEventListener('online', updateNetLabel);
+window.addEventListener('offline', updateNetLabel);
+updateNetLabel();
+if(!LS.ok){
+  const b = document.createElement('div');
+  b.className = 'banner warn';
+  b.innerHTML = '⚠️ <b>この画面では学習記録が保存できません。</b>プライベートブラウズを解除するか、通常のタブで開き直してください（学習自体はできますが、閉じると記録が消えます）。';
+  $('todayBanner').parentNode.insertBefore(b, $('todayBanner'));
+}
+</script>
+</body>
+</html>
