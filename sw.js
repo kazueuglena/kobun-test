@@ -4,7 +4,7 @@
          以後はキャッシュ優先で即座に返す（オフラインでも待たされない）。
          裏でこっそり更新を取りに行き、新版があれば次回起動から反映する。 */
 
-const VERSION = 'v1-20260824';
+const VERSION = 'v2-20260906';
 const CACHE = 'kobun-test-' + VERSION;
 
 const ASSETS = [
